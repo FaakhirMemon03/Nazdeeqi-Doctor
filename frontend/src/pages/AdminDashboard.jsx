@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllClinics, getPendingClinics, approveClinic, rejectClinic } from '../api';
+import { getAllClinics, getPendingClinics, approveClinic, rejectClinic, suspendClinic, getUsers, banUser, unbanUser } from '../api';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [tab, setTab] = useState('pending');
   const [clinics, setClinics] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
@@ -15,14 +16,19 @@ export default function AdminDashboard() {
       navigate('/login');
       return;
     }
-    loadClinics();
+    loadData();
   }, [tab]);
 
-  async function loadClinics() {
+  async function loadData() {
     setLoading(true);
     try {
-      const res = tab === 'pending' ? await getPendingClinics() : await getAllClinics();
-      setClinics(res.data.clinics);
+      if (tab === 'users') {
+        const res = await getUsers();
+        setUsers(res.data.users);
+      } else {
+        const res = tab === 'pending' ? await getPendingClinics() : await getAllClinics();
+        setClinics(res.data.clinics);
+      }
     } catch {
       navigate('/login');
     } finally {
@@ -35,7 +41,7 @@ export default function AdminDashboard() {
     try {
       const res = await approveClinic(id);
       setMessage(res.data.message);
-      loadClinics();
+      loadData();
     } catch (err) {
       alert(err.response?.data?.message || 'Approve fail');
     }
@@ -47,9 +53,42 @@ export default function AdminDashboard() {
     try {
       await rejectClinic(id, reason);
       setMessage('Clinic reject kar di gayi');
-      loadClinics();
+      loadData();
     } catch (err) {
       alert(err.response?.data?.message || 'Reject fail');
+    }
+  }
+
+  async function handleSuspend(id) {
+    if (!confirm('Kya aap is clinic ko suspend (stop) karna chahte hain?')) return;
+    try {
+      await suspendClinic(id);
+      setMessage('Clinic suspend kar di gayi hai');
+      loadData();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Suspend fail');
+    }
+  }
+
+  async function handleBanUser(id) {
+    if (!confirm('User ko ban karna hai?')) return;
+    try {
+      await banUser(id);
+      setMessage('User ban kar diya gaya');
+      loadData();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Ban fail');
+    }
+  }
+
+  async function handleUnbanUser(id) {
+    if (!confirm('User ko unban karna hai?')) return;
+    try {
+      await unbanUser(id);
+      setMessage('User unban kar diya gaya');
+      loadData();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Unban fail');
     }
   }
 
