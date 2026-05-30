@@ -7,32 +7,9 @@ const { authAdmin } = require('../middleware/auth');
 const { generatePassword, generateClinicLoginEmail, getInitials } = require('../utils/helpers');
 const { sendClinicCredentials } = require('../utils/mailer');
 
+const User = require('../models/User');
+
 const router = express.Router();
-
-router.post('/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const admin = await Admin.findOne({ email: email?.toLowerCase() });
-    
-    if (admin && (await admin.comparePassword(password))) {
-      const token = jwt.sign({ id: admin._id, role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '7d' });
-      return res.json({ token, role: 'admin', admin: { id: admin._id, email: admin.email, name: admin.name } });
-    }
-
-    const clinic = await Clinic.findOne({ email: email?.toLowerCase() });
-    if (clinic && (await clinic.comparePassword(password))) {
-      if (clinic.status !== 'approved') {
-        return res.status(403).json({ message: 'Aapki clinic abhi admin ne approve nahi ki hai' });
-      }
-      const token = jwt.sign({ id: clinic._id, role: 'clinic' }, process.env.JWT_SECRET, { expiresIn: '7d' });
-      return res.json({ token, role: 'clinic', clinic: { id: clinic._id, name: clinic.name, email: clinic.email } });
-    }
-
-    return res.status(401).json({ message: 'Galat email ya password' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-});
 
 router.get('/clinics/pending', authAdmin, async (_req, res) => {
   try {
@@ -108,6 +85,55 @@ router.patch('/clinics/:id/reject', authAdmin, async (req, res) => {
     await clinic.save();
 
     res.json({ message: 'Clinic reject kar di gayi' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.patch('/clinics/:id/suspend', authAdmin, async (req, res) => {
+  try {
+    const clinic = await Clinic.findById(req.params.id);
+    if (!clinic) return res.status(404).json({ message: 'Clinic not found' });
+
+    clinic.status = 'suspended';
+    await clinic.save();
+
+    res.json({ message: 'Clinic suspend kar di gayi hai' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get('/users', authAdmin, async (req, res) => {
+  try {
+    const users = await User.find().select('-password').sort({ createdAt: -1 });
+    res.json({ users });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.patch('/users/:id/ban', authAdmin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.status = 'banned';
+    await user.save();
+    res.json({ message: 'User ko ban kar diya gaya hai' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.patch('/users/:id/unban', authAdmin, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.status = 'active';
+    await user.save();
+    res.json({ message: 'User unban ho gaya hai' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
