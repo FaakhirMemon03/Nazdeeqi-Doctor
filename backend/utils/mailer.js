@@ -56,7 +56,23 @@ async function sendEmail({ to, subject, html, text }) {
   }
 }
 
-async function sendClinicCredentials({ clinicName, contactEmail, contactPhone, loginEmail, loginPassword }) {
+async function sendPasswordResetEmail(to, resetUrl) {
+  const subject = 'Nazdeeqi — Password Reset Link';
+  const html = `
+    <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto;">
+      <h2 style="color: #0F6E56;">Password Reset</h2>
+      <p>Aapne password reset ki request ki hai. Naye password set karne ke liye neeche diye gaye link par click karein:</p>
+      <div style="margin: 20px 0;">
+        <a href="${resetUrl}" style="background: #0F6E56; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
+      </div>
+      <p style="font-size: 12px; color: #666;">Ye link 10 minute mein expire ho jayega. Agar aapne request nahi ki thi, toh is email ko ignore karein.</p>
+    </div>
+  `;
+  const text = `Password reset link: ${resetUrl}`;
+  await sendEmail({ to, subject, html, text });
+}
+
+module.exports = { sendEmail, sendPasswordResetEmail };
   const subject = 'Nazdeeqi — Aapki Clinic Approved! Login Details';
   const html = `
     <div style="font-family: sans-serif; max-width: 520px; margin: 0 auto;">
