@@ -26,8 +26,8 @@ export default function AdminLoginPage() {
   return (
     <div className="page-container cl-wrap">
       <div className="cl-hero">
-        <h1 className="cl-title">Admin Login</h1>
-        <p className="cl-sub">Clinic registrations approve/reject karein</p>
+        <h1 className="cl-title">Login</h1>
+        <p className="cl-sub">Admin ya Clinic account me login karein</p>
       </div>
 
       {error && <div className="alert alert-error">{error}</div>}
