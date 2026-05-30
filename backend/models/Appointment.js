@@ -4,6 +4,7 @@ const appointmentSchema = new mongoose.Schema(
   {
     clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
     doctor: { type: mongoose.Schema.Types.ObjectId, ref: 'Doctor', required: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     patientName: { type: String, required: true },
     patientPhone: { type: String, required: true },
     complaint: { type: String, default: '' },
