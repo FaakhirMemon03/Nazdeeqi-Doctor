@@ -33,4 +33,22 @@ async function optionalAdmin(req, _res, next) {
   next();
 }
 
-module.exports = { authAdmin, optionalAdmin };
+function authUser(req, res, next) {
+  const header = req.headers.authorization;
+  if (!header?.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Login required' });
+  }
+  try {
+    const token = header.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (decoded.role !== 'user') {
+      return res.status(403).json({ message: 'Sirf patients book kar sakte hain' });
+    }
+    req.userId = decoded.id;
+    next();
+  } catch {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+}
+
+module.exports = { authAdmin, optionalAdmin, authUser };
