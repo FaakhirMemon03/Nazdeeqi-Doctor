@@ -15,17 +15,30 @@ const storage = multer.diskStorage({
   },
 });
 
+const IMAGE_EXT =
+  /\.(jpe?g|png|gif|webp|bmp|svg|ico|tiff?|heic|heif|avif|jfif|raw|cr2|nef|dng)$/i;
+
+function isAllowedFile(file) {
+  const ext = path.extname(file.originalname).toLowerCase();
+  const mime = (file.mimetype || '').toLowerCase();
+
+  if (mime.startsWith('image/')) return true;
+  if (mime === 'application/pdf' || ext === '.pdf') return true;
+  if (IMAGE_EXT.test(ext)) return true;
+  // Phone/camera kabhi generic mime bhejte hain
+  if (mime === 'application/octet-stream' && ext) return true;
+
+  return false;
+}
+
 const fileFilter = (_req, file, cb) => {
-  const allowed = /jpeg|jpg|png|webp|pdf/;
-  const ext = allowed.test(path.extname(file.originalname).toLowerCase());
-  const mime = allowed.test(file.mimetype);
-  if (ext && mime) return cb(null, true);
-  cb(new Error('Only images (jpg, png, webp) and PDF allowed'));
+  if (isAllowedFile(file)) return cb(null, true);
+  cb(new Error('Sirf image files (jpg, png, gif, heic, webp, ...) ya PDF upload karein'));
 };
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter,
 });
 

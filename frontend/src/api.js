@@ -16,9 +16,7 @@ export const getNearbyClinics = (params) => api.get('/clinics/nearby', { params 
 export const getClinicById = (id) => api.get(`/clinics/${id}`);
 export const getStats = () => api.get('/clinics/stats');
 export const registerClinic = (formData) =>
-  api.post('/clinics/register', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+  api.post('/clinics/register', formData);
 export const bookAppointment = (data) => api.post('/appointments', data);
 
 export const adminLogin = (data) => api.post('/admin/login', data);

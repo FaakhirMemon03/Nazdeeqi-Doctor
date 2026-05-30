@@ -68,14 +68,24 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-router.post(
-  '/register',
+function handleUpload(req, res, next) {
   upload.fields([
     { name: 'certificateImage', maxCount: 1 },
     { name: 'licenseImage', maxCount: 1 },
     { name: 'agreementImages', maxCount: 5 },
-  ]),
-  async (req, res) => {
+  ])(req, res, (err) => {
+    if (err) {
+      const message =
+        err.code === 'LIMIT_FILE_SIZE'
+          ? 'File 10MB se choti honi chahiye'
+          : err.message || 'File upload error';
+      return res.status(400).json({ message });
+    }
+    next();
+  });
+}
+
+router.post('/register', handleUpload, async (req, res) => {
     try {
       const { name, address, phone, email, latitude, longitude, city } = req.body;
 
@@ -107,7 +117,9 @@ router.post(
         status: 'pending',
       });
 
-      await sendRegistrationPending({ clinicName: name, contactEmail: email });
+      await sendRegistrationPending({ clinicName: name, contactEmail: email }).catch((e) =>
+        console.error('[Registration email skipped]', e.message)
+      );
 
       res.status(201).json({
         message: 'Registration successful! Admin approval ke baad login details email/SMS par bheji jayengi.',
@@ -116,7 +128,6 @@ router.post(
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
-  }
-);
+});
 
 module.exports = router;

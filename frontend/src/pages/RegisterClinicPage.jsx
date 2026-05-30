@@ -65,7 +65,10 @@ export default function RegisterClinicPage() {
       await registerClinic(data);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration fail ho gayi');
+      const msg = err.response?.data?.message;
+      if (msg) setError(msg);
+      else if (err.code === 'ERR_NETWORK') setError('Server se connect nahi ho raha. Backend chal raha hai? (npm run dev)');
+      else setError('Registration fail ho gayi. Dobara try karein.');
     } finally {
       setLoading(false);
     }
@@ -171,29 +174,29 @@ export default function RegisterClinicPage() {
         </div>
 
         <div className="field">
-          <label htmlFor="certificateImage">Doctor ka Certificate (image/PDF) *</label>
+          <label htmlFor="certificateImage">Doctor ka Certificate (koi bhi image / PDF) *</label>
           <input
             id="certificateImage"
             name="certificateImage"
             type="file"
-            accept="image/*,.pdf"
+            accept="image/*,application/pdf,.heic,.heif"
             required
             onChange={handleFileChange}
           />
-          <p className="file-hint">MBBS ya specialist degree certificate</p>
+          <p className="file-hint">JPG, PNG, GIF, HEIC, WebP, PDF — sab chalega (max 10MB)</p>
         </div>
 
         <div className="field">
-          <label htmlFor="licenseImage">Doctor ka License (image/PDF) *</label>
+          <label htmlFor="licenseImage">Doctor ka License (koi bhi image / PDF) *</label>
           <input
             id="licenseImage"
             name="licenseImage"
             type="file"
-            accept="image/*,.pdf"
+            accept="image/*,application/pdf,.heic,.heif"
             required
             onChange={handleFileChange}
           />
-          <p className="file-hint">PMDC / medical council license</p>
+          <p className="file-hint">PMDC license — koi bhi image format</p>
         </div>
 
         <div className="field">
@@ -202,11 +205,11 @@ export default function RegisterClinicPage() {
             id="agreementImages"
             name="agreementImages"
             type="file"
-            accept="image/*,.pdf"
+            accept="image/*,application/pdf,.heic,.heif"
             multiple
             onChange={handleFileChange}
           />
-          <p className="file-hint">Clinic agreement, rent deed, etc.</p>
+          <p className="file-hint">Har type ki photo/image upload kar sakte hain</p>
         </div>
 
         <div className="alert alert-info" style={{ marginTop: '1rem' }}>

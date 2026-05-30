@@ -4,34 +4,46 @@ let transporter = null;
 
 function getTransporter() {
   if (transporter) return transporter;
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+
+  const user = process.env.SMTP_USER?.trim();
+  const pass = process.env.SMTP_PASS?.trim();
+  const placeholders = ['your-email@gmail.com', 'your-app-password', ''];
+
+  if (!user || !pass || placeholders.includes(user) || placeholders.includes(pass)) {
     return null;
   }
+
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST || 'smtp.gmail.com',
     port: Number(process.env.SMTP_PORT) || 587,
     secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
+    auth: { user, pass },
   });
   return transporter;
 }
 
 async function sendEmail({ to, subject, html, text }) {
+  const payload = { to, subject, text: text || html?.replace(/<[^>]+>/g, '') };
+
   const transport = getTransporter();
   if (!transport) {
-    console.log('[Email Mock]', { to, subject, text: text || html });
+    console.log('[Email Mock]', payload);
     return { mocked: true };
   }
-  return transport.sendMail({
-    from: process.env.SMTP_FROM || process.env.SMTP_USER,
-    to,
-    subject,
-    html,
-    text,
-  });
+
+  try {
+    return await transport.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+      to,
+      subject,
+      html,
+      text,
+    });
+  } catch (err) {
+    console.error('[Email failed — using mock]', err.message);
+    console.log('[Email Mock]', payload);
+    return { mocked: true, error: err.message };
+  }
 }
 
 async function sendClinicCredentials({ clinicName, contactEmail, contactPhone, loginEmail, loginPassword }) {
