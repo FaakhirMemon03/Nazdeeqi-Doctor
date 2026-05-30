@@ -8,7 +8,6 @@ export default function AdminDashboard() {
   const [clinics, setClinics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
-  const [credentials, setCredentials] = useState(null);
 
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
@@ -32,11 +31,10 @@ export default function AdminDashboard() {
   }
 
   async function handleApprove(id) {
-    if (!confirm('Is clinic ko approve karna hai? Login credentials email/SMS par bheje jayenge.')) return;
+    if (!confirm('Is clinic ko approve karna hai? Approve hone ke baad clinic apne email aur password se login kar sakegi.')) return;
     try {
       const res = await approveClinic(id);
       setMessage(res.data.message);
-      setCredentials({ loginEmail: res.data.loginEmail, loginPassword: res.data.loginPassword });
       loadClinics();
     } catch (err) {
       alert(err.response?.data?.message || 'Approve fail');
@@ -89,16 +87,6 @@ export default function AdminDashboard() {
       </div>
 
       {message && <div className="alert alert-success">{message}</div>}
-
-      {credentials && (
-        <div className="alert alert-info">
-          <strong>Generated Credentials (email/SMS bhej diye gaye):</strong>
-          <br />
-          Email: {credentials.loginEmail}
-          <br />
-          Password: {credentials.loginPassword}
-        </div>
-      )}
 
       {loading ? (
         <div className="loading">Loading...</div>
