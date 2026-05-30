@@ -14,11 +14,13 @@ const clinicSchema = new mongoose.Schema(
     agreementImages: [{ type: String }],
     status: {
       type: String,
-      enum: ['pending', 'approved', 'rejected'],
+      enum: ['pending', 'approved', 'rejected', 'suspended'],
       default: 'pending',
     },
     password: { type: String, required: true },
     rejectionReason: { type: String, default: null },
+    resetPasswordToken: { type: String, default: null },
+    resetPasswordExpires: { type: Date, default: null },
   },
   { timestamps: true }
 );
