@@ -18,6 +18,9 @@ export default function AdminLoginPage() {
         localStorage.setItem('clinicToken', res.data.token);
         localStorage.setItem('clinicId', res.data.clinic.id);
         navigate('/clinic-dashboard');
+      } else if (res.data.role === 'user') {
+        localStorage.setItem('userToken', res.data.token);
+        navigate('/user-dashboard'); // Or home page
       } else {
         localStorage.setItem('adminToken', res.data.token);
         navigate('/admin');
