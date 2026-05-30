@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { adminLogin } from '../api';
 
 export default function AdminLoginPage() {
@@ -61,10 +61,19 @@ export default function AdminLoginPage() {
             value={form.password}
             onChange={(e) => setForm({ ...form, password: e.target.value })}
           />
+          <div style={{ textAlign: 'right', marginTop: '4px' }}>
+            <Link to="/forgot-password" style={{ fontSize: '12px', color: '#0F6E56', textDecoration: 'none' }}>
+              Forgot Password?
+            </Link>
+          </div>
         </div>
-        <button className="cl-cta" type="submit" disabled={loading}>
+        <button className="cl-cta" type="submit" disabled={loading} style={{ marginTop: '1rem', width: '100%' }}>
           {loading ? 'Login...' : 'Login'}
         </button>
+        
+        <p style={{ textAlign: 'center', marginTop: '1rem', fontSize: '14px' }}>
+          Account nahi hai? <Link to="/register-user" style={{ color: '#0F6E56', fontWeight: 'bold' }}>Naya patient account banayein</Link>
+        </p>
       </form>
     </div>
   );
