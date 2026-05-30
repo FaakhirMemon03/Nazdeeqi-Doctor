@@ -13,11 +13,22 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const admin = await Admin.findOne({ email: email?.toLowerCase() });
-    if (!admin || !(await admin.comparePassword(password))) {
-      return res.status(401).json({ message: 'Galat email ya password' });
+    
+    if (admin && (await admin.comparePassword(password))) {
+      const token = jwt.sign({ id: admin._id, role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '7d' });
+      return res.json({ token, role: 'admin', admin: { id: admin._id, email: admin.email, name: admin.name } });
     }
-    const token = jwt.sign({ id: admin._id, role: 'admin' }, process.env.JWT_SECRET, { expiresIn: '7d' });
-    res.json({ token, admin: { id: admin._id, email: admin.email, name: admin.name } });
+
+    const clinic = await Clinic.findOne({ email: email?.toLowerCase() });
+    if (clinic && (await clinic.comparePassword(password))) {
+      if (clinic.status !== 'approved') {
+        return res.status(403).json({ message: 'Aapki clinic abhi admin ne approve nahi ki hai' });
+      }
+      const token = jwt.sign({ id: clinic._id, role: 'clinic' }, process.env.JWT_SECRET, { expiresIn: '7d' });
+      return res.json({ token, role: 'clinic', clinic: { id: clinic._id, name: clinic.name, email: clinic.email } });
+    }
+
+    return res.status(401).json({ message: 'Galat email ya password' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -59,13 +70,7 @@ router.patch('/clinics/:id/approve', authAdmin, async (req, res) => {
       return res.status(400).json({ message: 'Pehle se approved hai' });
     }
 
-    const loginEmail = generateClinicLoginEmail(clinic.name);
-    const loginPassword = generatePassword(12);
-
     clinic.status = 'approved';
-    clinic.loginEmail = loginEmail;
-    clinic.loginPassword = loginPassword;
-    clinic.credentialsSent = true;
     await clinic.save();
 
     // Seed default doctors if none exist
@@ -85,18 +90,8 @@ router.patch('/clinics/:id/approve', authAdmin, async (req, res) => {
       );
     }
 
-    await sendClinicCredentials({
-      clinicName: clinic.name,
-      contactEmail: clinic.email,
-      contactPhone: clinic.phone,
-      loginEmail,
-      loginPassword,
-    });
-
     res.json({
-      message: 'Clinic approved! Login details email aur SMS par bhej diye gaye.',
-      loginEmail,
-      loginPassword,
+      message: 'Clinic approved!',
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

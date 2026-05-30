@@ -8,6 +8,7 @@ export default function RegisterClinicPage() {
     address: '',
     phone: '',
     email: '',
+    password: '',
     city: 'Karachi',
   });
   const [files, setFiles] = useState({

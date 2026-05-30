@@ -87,10 +87,10 @@ function handleUpload(req, res, next) {
 
 router.post('/register', handleUpload, async (req, res) => {
     try {
-      const { name, address, phone, email, latitude, longitude, city } = req.body;
+      const { name, address, phone, email, latitude, longitude, city, password } = req.body;
 
-      if (!name || !address || !phone || !email) {
-        return res.status(400).json({ message: 'Name, address, phone aur email zaroori hain' });
+      if (!name || !address || !phone || !email || !password) {
+        return res.status(400).json({ message: 'Name, address, phone, email aur password zaroori hain' });
       }
       if (!req.files?.certificateImage?.[0] || !req.files?.licenseImage?.[0]) {
         return res.status(400).json({ message: 'Doctor certificate aur license ki image zaroori hai' });
@@ -101,6 +101,9 @@ router.post('/register', handleUpload, async (req, res) => {
         return res.status(400).json({ message: 'Is email se pehle se registration hai' });
       }
 
+      const bcrypt = require('bcryptjs');
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       const agreementImages = (req.files.agreementImages || []).map((f) => `/uploads/${f.filename}`);
 
       const clinic = await Clinic.create({
@@ -108,6 +111,7 @@ router.post('/register', handleUpload, async (req, res) => {
         address,
         phone,
         email: email.toLowerCase(),
+        password: hashedPassword,
         latitude: latitude ? +latitude : null,
         longitude: longitude ? +longitude : null,
         city: city || 'Karachi',
@@ -117,12 +121,8 @@ router.post('/register', handleUpload, async (req, res) => {
         status: 'pending',
       });
 
-      await sendRegistrationPending({ clinicName: name, contactEmail: email }).catch((e) =>
-        console.error('[Registration email skipped]', e.message)
-      );
-
       res.status(201).json({
-        message: 'Registration successful! Admin approval ke baad login details email/SMS par bheji jayengi.',
+        message: 'Registration successful! Admin approval ke baad aap login kar sakenge.',
         clinicId: clinic._id,
       });
     } catch (err) {

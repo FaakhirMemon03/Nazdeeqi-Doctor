@@ -17,12 +17,15 @@ const clinicSchema = new mongoose.Schema(
       enum: ['pending', 'approved', 'rejected'],
       default: 'pending',
     },
-    loginEmail: { type: String, default: null },
-    loginPassword: { type: String, default: null },
-    credentialsSent: { type: Boolean, default: false },
+    password: { type: String, required: true },
     rejectionReason: { type: String, default: null },
   },
   { timestamps: true }
 );
+
+clinicSchema.methods.comparePassword = async function (candidatePassword) {
+  const bcrypt = require('bcryptjs');
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 module.exports = mongoose.model('Clinic', clinicSchema);
