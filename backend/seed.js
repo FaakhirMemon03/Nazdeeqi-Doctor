@@ -32,9 +32,7 @@ async function seed() {
       licenseImage: '/uploads/sample-license.jpg',
       agreementImages: [],
       status: 'approved',
-      loginEmail: 'citycare_a1b2@nazdeeqi.pk',
-      loginPassword: 'DemoPass123',
-      credentialsSent: true,
+      password: '$2a$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // Dummy hash
     },
     {
       name: 'Green Valley Clinic',
@@ -48,9 +46,7 @@ async function seed() {
       licenseImage: '/uploads/sample-license.jpg',
       agreementImages: [],
       status: 'approved',
-      loginEmail: 'greenvalley_c3d4@nazdeeqi.pk',
-      loginPassword: 'DemoPass456',
-      credentialsSent: true,
+      password: '$2a$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
     },
     {
       name: 'Family Health Center',
@@ -64,9 +60,7 @@ async function seed() {
       licenseImage: '/uploads/sample-license.jpg',
       agreementImages: [],
       status: 'approved',
-      loginEmail: 'familyhealth_e5f6@nazdeeqi.pk',
-      loginPassword: 'DemoPass789',
-      credentialsSent: true,
+      password: '$2a$10$XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX',
     },
   ];
 
