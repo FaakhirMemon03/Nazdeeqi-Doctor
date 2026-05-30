@@ -98,9 +98,11 @@ input:focus, select:focus, textarea:focus {
 }
 
 .page-container {
-  max-width: 720px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem 1rem 3rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Landing template styles */
@@ -179,7 +181,7 @@ input:focus, select:focus, textarea:focus {
 .file-hint { font-size: 11px; color: #999; margin-top: 4px; }
 
 /* Admin */
-.admin-layout { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem; }
+.admin-layout { max-width: 1200px; margin: 0 auto; padding: 1.5rem 1rem; width: 100%; box-sizing: border-box; }
 .admin-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: var(--border-radius-lg); overflow: hidden; font-size: 14px; }
 .admin-table th, .admin-table td { padding: 12px; text-align: left; border-bottom: 0.5px solid var(--color-border-tertiary); }
 .admin-table th { background: var(--green-light); color: var(--green-dark); font-weight: 500; font-size: 12px; text-transform: uppercase; }
@@ -197,8 +199,15 @@ input:focus, select:focus, textarea:focus {
 .alert-success { background: var(--green-light); color: var(--green-dark); }
 .loading { text-align: center; padding: 2rem; color: var(--color-text-secondary); }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .cl-form-row { grid-template-columns: 1fr; }
   .cl-features { grid-template-columns: 1fr; }
   .clinic-card { flex-direction: column; align-items: flex-start; gap: 8px; }
+  
+  .app-nav { flex-direction: column; gap: 10px; padding: 1rem; }
+  .app-nav-links { width: 100%; justify-content: center; flex-wrap: wrap; }
+  
+  .cl-stats { gap: 1rem; justify-content: center; text-align: center; }
+  .cl-hero { text-align: center; padding: 2rem 1rem; }
+  .cl-title { font-size: 24px; }
 }

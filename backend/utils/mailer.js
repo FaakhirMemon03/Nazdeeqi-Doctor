@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 
 let transporter = null;
 
-function getTransporter() {
+async function getTransporter() {
   if (transporter) return transporter;
 
   const user = process.env.SMTP_USER?.trim();
@@ -10,7 +10,18 @@ function getTransporter() {
   const placeholders = ['your-email@gmail.com', 'your-app-password', ''];
 
   if (!user || !pass || placeholders.includes(user) || placeholders.includes(pass)) {
-    return null;
+    console.log('[Email] No SMTP credentials, creating Ethereal test account...');
+    const testAccount = await nodemailer.createTestAccount();
+    transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass,
+      },
+    });
+    return transporter;
   }
 
   transporter = nodemailer.createTransport({
@@ -25,23 +36,22 @@ function getTransporter() {
 async function sendEmail({ to, subject, html, text }) {
   const payload = { to, subject, text: text || html?.replace(/<[^>]+>/g, '') };
 
-  const transport = getTransporter();
-  if (!transport) {
-    console.log('[Email Mock]', payload);
-    return { mocked: true };
-  }
+  const transport = await getTransporter();
 
   try {
-    return await transport.sendMail({
-      from: process.env.SMTP_FROM || process.env.SMTP_USER,
+    const info = await transport.sendMail({
+      from: process.env.SMTP_FROM || process.env.SMTP_USER || '"Nazdeeqi Doctor" <noreply@nazdeeqi.pk>',
       to,
       subject,
       html,
       text,
     });
+    if (info.messageId && transport.options.host === 'smtp.ethereal.email') {
+      console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+    }
+    return info;
   } catch (err) {
-    console.error('[Email failed — using mock]', err.message);
-    console.log('[Email Mock]', payload);
+    console.error('[Email failed]', err.message);
     return { mocked: true, error: err.message };
   }
 }

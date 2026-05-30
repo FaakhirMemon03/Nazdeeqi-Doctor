@@ -13,7 +13,7 @@ export default function AdminDashboard() {
   useEffect(() => {
     const token = localStorage.getItem('adminToken');
     if (!token) {
-      navigate('/admin/login');
+      navigate('/login');
       return;
     }
     loadClinics();
@@ -25,7 +25,7 @@ export default function AdminDashboard() {
       const res = tab === 'pending' ? await getPendingClinics() : await getAllClinics();
       setClinics(res.data.clinics);
     } catch {
-      navigate('/admin/login');
+      navigate('/login');
     } finally {
       setLoading(false);
     }
@@ -57,7 +57,7 @@ export default function AdminDashboard() {
 
   function logout() {
     localStorage.removeItem('adminToken');
-    navigate('/admin/login');
+    navigate('/login');
   }
 
   return (

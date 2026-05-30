@@ -14,7 +14,7 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/clinic/:id" element={<ClinicPage />} />
         <Route path="/register-clinic" element={<RegisterClinicPage />} />
-        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </div>
