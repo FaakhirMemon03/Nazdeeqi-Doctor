@@ -136,6 +136,41 @@ export default function AdminDashboard() {
 
       {loading ? (
         <div className="loading">Loading...</div>
+      ) : tab === 'users' ? (
+        users.length === 0 ? (
+          <div className="alert alert-info">Koi user nahi mila</div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Joined</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u) => (
+                  <tr key={u._id}>
+                    <td><strong>{u.name}</strong></td>
+                    <td>{u.email}<br /><small>{u.phone}</small></td>
+                    <td>{new Date(u.createdAt).toLocaleDateString()}</td>
+                    <td><span className={`status-badge status-${u.status === 'active' ? 'approved' : 'rejected'}`}>{u.status}</span></td>
+                    <td>
+                      {u.status === 'active' ? (
+                        <button className="btn-sm btn-reject" onClick={() => handleBanUser(u._id)} type="button">Ban</button>
+                      ) : (
+                        <button className="btn-sm btn-approve" onClick={() => handleUnbanUser(u._id)} type="button">Unban</button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
       ) : clinics.length === 0 ? (
         <div className="alert alert-info">Koi clinic nahi mili</div>
       ) : (
@@ -180,10 +215,6 @@ export default function AdminDashboard() {
                   </td>
                   <td>
                     <span className={`status-badge status-${c.status}`}>{c.status}</span>
-                    {c.credentialsSent && (
-                      <br />
-                    )}
-                    {c.credentialsSent && <small>Credentials sent</small>}
                   </td>
                   <td>
                     {c.status === 'pending' && (
@@ -196,8 +227,10 @@ export default function AdminDashboard() {
                         </button>
                       </>
                     )}
-                    {c.status === 'approved' && c.loginEmail && (
-                      <small>{c.loginEmail}</small>
+                    {c.status === 'approved' && tab === 'all' && (
+                      <button className="btn-sm btn-reject" onClick={() => handleSuspend(c._id)} type="button">
+                        Suspend
+                      </button>
                     )}
                   </td>
                 </tr>
