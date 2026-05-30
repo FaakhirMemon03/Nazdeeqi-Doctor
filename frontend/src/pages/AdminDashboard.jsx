@@ -114,7 +114,7 @@ export default function AdminDashboard() {
           onClick={() => setTab('pending')}
           type="button"
         >
-          Pending
+          Pending Clinics
         </button>
         <button
           className={`btn-sm ${tab === 'all' ? 'btn-approve' : 'btn-outline'}`}
@@ -122,6 +122,13 @@ export default function AdminDashboard() {
           type="button"
         >
           All Clinics
+        </button>
+        <button
+          className={`btn-sm ${tab === 'users' ? 'btn-approve' : 'btn-outline'}`}
+          onClick={() => setTab('users')}
+          type="button"
+        >
+          Users
         </button>
       </div>
 
