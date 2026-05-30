@@ -7,7 +7,7 @@ async function getTransporter() {
 
   const user = process.env.SMTP_USER?.trim();
   const pass = process.env.SMTP_PASS?.trim();
-  const placeholders = ['your-email@gmail.com', 'your-app-password', ''];
+  const placeholders = ['info.skillswapp@gmail.com', 'jhst cayc stmb bogu', '587'];
 
   if (!user || !pass || placeholders.includes(user) || placeholders.includes(pass)) {
     console.log('[Email] No SMTP credentials, creating Ethereal test account...');
