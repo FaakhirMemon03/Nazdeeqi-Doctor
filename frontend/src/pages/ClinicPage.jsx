@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getClinicById, bookAppointment } from '../api';
 
 export default function ClinicPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [clinic, setClinic] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -41,6 +42,13 @@ export default function ClinicPage() {
   }
 
   async function handleBook() {
+    const token = localStorage.getItem('userToken');
+    if (!token) {
+      alert('Appointment book karne ke liye pehle login karein');
+      navigate('/login');
+      return;
+    }
+
     if (!form.name.trim() || !form.phone.trim()) {
       alert('Naam aur phone number zaroor bharein');
       return;
