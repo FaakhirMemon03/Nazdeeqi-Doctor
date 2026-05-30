@@ -19,6 +19,7 @@ export default function Navbar() {
     <nav className="app-nav">
       <Link to="/" className="app-nav-brand">Nazdeeqi Doctor</Link>
       <div className="app-nav-links">
+        <Link to="/admin/login" style={{ fontSize: 12 }}>Admin</Link>
         <Link to="/register-clinic" className="app-nav-cta">Clinic Register Karein</Link>
       </div>
     </nav>
