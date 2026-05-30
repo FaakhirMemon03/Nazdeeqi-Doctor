@@ -82,9 +82,7 @@ export default function RegisterClinicPage() {
           <i className="ti ti-circle-check" aria-hidden="true" />
           <p className="cl-success-title">Registration Submit Ho Gayi!</p>
           <p className="cl-success-msg">
-            Admin review ke baad aapke diye gaye email ({form.email}) aur phone ({form.phone}) par
-            login credentials bheje jayenge. Tab tak credentials send nahi honge jab tak admin
-            approve na kare.
+            Admin review ke baad aap apne diye gaye email ({form.email}) aur password se login kar sakenge.
           </p>
           <Link to="/" style={{ display: 'inline-block', marginTop: '1rem', color: '#0F6E56' }}>
             ← Home par wapas jayein
@@ -161,6 +159,19 @@ export default function RegisterClinicPage() {
         </div>
 
         <div className="field">
+          <label htmlFor="password">Password *</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            placeholder="Aapka pasandeeda password"
+            value={form.password}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="field">
           <label htmlFor="city">Shehar</label>
           <select id="city" name="city" value={form.city} onChange={handleChange}>
             <option value="Karachi">Karachi</option>
@@ -214,9 +225,7 @@ export default function RegisterClinicPage() {
         </div>
 
         <div className="alert alert-info" style={{ marginTop: '1rem' }}>
-          <i className="ti ti-info-circle" /> Registration ke baad random login email/password
-          generate hoga. Ye tab tak email aur SMS par nahi bheja jayega jab tak admin approve na
-          kare.
+          <i className="ti ti-info-circle" /> Registration ke baad, admin aapki detail verify karega. Verify hone ke baad aap apne email aur password se login kar sakenge.
         </div>
 
         <button className="cl-cta" type="submit" disabled={loading} style={{ marginTop: '1rem' }}>
