@@ -14,10 +14,16 @@ export default function AdminLoginPage() {
     setError('');
     try {
       const res = await adminLogin(form);
-      localStorage.setItem('adminToken', res.data.token);
-      navigate('/admin');
-    } catch {
-      setError('Galat email ya password');
+      if (res.data.role === 'clinic') {
+        localStorage.setItem('clinicToken', res.data.token);
+        localStorage.setItem('clinicId', res.data.clinic.id);
+        navigate('/clinic-dashboard');
+      } else {
+        localStorage.setItem('adminToken', res.data.token);
+        navigate('/admin');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Galat email ya password');
     } finally {
       setLoading(false);
     }

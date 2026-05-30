@@ -5,6 +5,7 @@ import ClinicPage from './pages/ClinicPage';
 import RegisterClinicPage from './pages/RegisterClinicPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
+import ClinicDashboard from './pages/ClinicDashboard';
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
         <Route path="/register-clinic" element={<RegisterClinicPage />} />
         <Route path="/login" element={<AdminLoginPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/clinic-dashboard" element={<ClinicDashboard />} />
       </Routes>
     </div>
   );

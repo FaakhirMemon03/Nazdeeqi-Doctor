@@ -25,4 +25,6 @@ export const getAllClinics = () => api.get('/admin/clinics/all');
 export const approveClinic = (id) => api.patch(`/admin/clinics/${id}/approve`);
 export const rejectClinic = (id, reason) => api.patch(`/admin/clinics/${id}/reject`, { reason });
 
+export const getClinicAppointments = (clinicId) => api.get(`/appointments/clinic/${clinicId}`);
+
 export default api;
