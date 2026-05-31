@@ -140,7 +140,7 @@ class _ClinicSettingsTabState extends State<ClinicSettingsTab> {
                   clinic.isOpenToday ? 'Patients aapki clinic ko open dekhenge.' : 'Patients aapki clinic ko closed dekhenge.',
                   style: const TextStyle(fontSize: 12),
                 ),
-                activeColor: AppColors.success,
+                activeThumbColor: AppColors.success,
                 activeTrackColor: AppColors.successBg,
                 inactiveThumbColor: AppColors.error,
                 inactiveTrackColor: AppColors.errorBg,
