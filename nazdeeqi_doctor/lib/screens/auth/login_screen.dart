@@ -157,11 +157,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   if (_errorMessage.isNotEmpty)
                     Container(
                       padding: const EdgeInsets.all(12),
-                      margin: const EdgeInsets.bottom(16),
+                      margin: const EdgeInsets.only(bottom: 16),
                       decoration: BoxDecoration(
                         color: AppColors.errorBg,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: AppColors.error.withOpacity(0.3)),
+                        border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
                       ),
                       child: Text(
                         _errorMessage,
@@ -247,11 +247,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   // Premium Sandbox guidelines card
                   if (isDemo)
                     Card(
-                      color: AppColors.primaryLight.withOpacity(0.7),
+                      color: AppColors.primaryLight.withValues(alpha: 0.7),
                       shadowColor: Colors.transparent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.primary.withOpacity(0.1)),
+                        side: BorderSide(color: AppColors.primary.withValues(alpha: 0.1)),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(12.0),
