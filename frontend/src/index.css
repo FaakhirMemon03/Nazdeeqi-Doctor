@@ -197,6 +197,76 @@ input:focus, select:focus, textarea:focus {
 .alert-info { background: var(--green-light); color: var(--green-dark); }
 .alert-error { background: #FBEAF0; color: #993556; }
 .alert-success { background: var(--green-light); color: var(--green-dark); }
+/* ---- Premium Nazdeeqi Loader ---- */
+.ndq-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3.5rem 2rem;
+  gap: 20px;
+}
+.ndq-loader-icon {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ndq-loader-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid var(--green-light);
+  border-top-color: var(--green-primary);
+  border-right-color: var(--green-accent);
+  animation: ndq-spin 1s cubic-bezier(0.6, 0.15, 0.35, 0.85) infinite;
+}
+.ndq-loader-ring-outer {
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-bottom-color: rgba(15, 110, 86, 0.15);
+  border-left-color: rgba(15, 110, 86, 0.1);
+  animation: ndq-spin-reverse 1.8s linear infinite;
+}
+.ndq-loader-heart {
+  font-size: 26px;
+  color: var(--green-primary);
+  animation: ndq-pulse 1.2s ease-in-out infinite;
+  filter: drop-shadow(0 2px 8px rgba(15, 110, 86, 0.25));
+  z-index: 1;
+}
+.ndq-loader-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--green-dark);
+  letter-spacing: 0.5px;
+}
+.ndq-loader-sub {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: -12px;
+  animation: ndq-fade 2s ease-in-out infinite;
+}
+@keyframes ndq-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes ndq-spin-reverse {
+  to { transform: rotate(-360deg); }
+}
+@keyframes ndq-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.18); opacity: 0.8; }
+}
+@keyframes ndq-fade {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Fallback simple loading class */
 .loading {
   display: flex;
   flex-direction: column;
@@ -215,10 +285,7 @@ input:focus, select:focus, textarea:focus {
   border: 3.5px solid var(--green-light);
   border-top-color: var(--green-primary);
   border-radius: 50%;
-  animation: spinner 0.8s linear infinite;
-}
-@keyframes spinner {
-  to { transform: rotate(360deg); }
+  animation: ndq-spin 0.8s linear infinite;
 }
 
 @keyframes slideIn {
