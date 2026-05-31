@@ -204,16 +204,74 @@ export default function ClinicPage() {
           </div>
         </>
       ) : (
-        <div className="cl-success">
-          <i className="ti ti-circle-check" aria-hidden="true" />
-          <p className="cl-success-title">Appointment Book Ho Gayi!</p>
-          <p className="cl-success-msg">
-            {success.patientName}, {success.doctorName} ke saath {success.timeSlot} ki appointment
-            confirm hai. SMS aa jayega {success.patientPhone} par.
-          </p>
-          <Link to="/" style={{ display: 'inline-block', marginTop: '1rem', color: '#0F6E56' }}>
-            ← Home par wapas jayein
-          </Link>
+        <div className="cl-success" style={{ textAlign: 'left', padding: '2rem', maxWidth: '520px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <i className="ti ti-circle-check" aria-hidden="true" style={{ fontSize: '3rem', color: '#0F6E56' }} />
+            <p className="cl-success-title" style={{ marginTop: '0.5rem' }}>Appointment Confirm Ho Gayi!</p>
+          </div>
+
+          {/* Receipt Card */}
+          <div style={{
+            background: 'linear-gradient(135deg, #04342C 0%, #0F6E56 100%)',
+            borderRadius: '16px',
+            padding: '1.5rem',
+            color: 'white',
+            marginBottom: '1.5rem',
+            boxShadow: '0 8px 32px rgba(4,52,44,0.25)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+              <div>
+                <div style={{ fontSize: '11px', opacity: 0.7, letterSpacing: '1px', textTransform: 'uppercase' }}>Booking ID</div>
+                <div style={{ fontSize: '1.6rem', fontWeight: 700, letterSpacing: '3px', fontFamily: 'monospace' }}>{success.bookingCode}</div>
+              </div>
+              <div style={{ fontSize: '11px', opacity: 0.7, background: 'rgba(255,255,255,0.15)', padding: '4px 10px', borderRadius: '20px' }}>CONFIRMED</div>
+            </div>
+
+            <div style={{ height: '1px', background: 'rgba(255,255,255,0.2)', margin: '1rem 0' }} />
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem', fontSize: '13px' }}>
+              <div>
+                <div style={{ opacity: 0.65, fontSize: '11px', marginBottom: '2px' }}>Patient</div>
+                <div style={{ fontWeight: 600 }}>{success.patientName}</div>
+              </div>
+              <div>
+                <div style={{ opacity: 0.65, fontSize: '11px', marginBottom: '2px' }}>Phone</div>
+                <div style={{ fontWeight: 600 }}>{success.patientPhone}</div>
+              </div>
+              <div>
+                <div style={{ opacity: 0.65, fontSize: '11px', marginBottom: '2px' }}>Doctor</div>
+                <div style={{ fontWeight: 600 }}>{success.doctorName}</div>
+              </div>
+              <div>
+                <div style={{ opacity: 0.65, fontSize: '11px', marginBottom: '2px' }}>Time Slot</div>
+                <div style={{ fontWeight: 600 }}>{success.timeSlot}</div>
+              </div>
+              <div>
+                <div style={{ opacity: 0.65, fontSize: '11px', marginBottom: '2px' }}>Clinic</div>
+                <div style={{ fontWeight: 600 }}>{success.clinicName}</div>
+              </div>
+              {success.complaint && (
+                <div>
+                  <div style={{ opacity: 0.65, fontSize: '11px', marginBottom: '2px' }}>Takleef</div>
+                  <div style={{ fontWeight: 600 }}>{success.complaint}</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="alert alert-info" style={{ fontSize: '13px', marginBottom: '1rem' }}>
+            <strong>Clinic ko yeh Booking ID dikhayein:</strong> <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '15px' }}>{success.bookingCode}</span>
+            <br />Clinic staff is ID se aapki booking verify karengi.
+          </div>
+
+          <div style={{ display: 'flex', gap: '8px', marginTop: '1rem' }}>
+            <Link to="/user-dashboard" style={{ flex: 1, display: 'block', textAlign: 'center', padding: '10px', background: '#0F6E56', color: 'white', borderRadius: '8px', textDecoration: 'none', fontWeight: 600 }}>
+              My Appointments
+            </Link>
+            <Link to="/" style={{ flex: 1, display: 'block', textAlign: 'center', padding: '10px', border: '1.5px solid #ccc', color: '#666', borderRadius: '8px', textDecoration: 'none', fontWeight: 500 }}>
+              ← Home
+            </Link>
+          </div>
         </div>
       )}
     </div>

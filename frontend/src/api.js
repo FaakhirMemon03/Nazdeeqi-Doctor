@@ -42,6 +42,7 @@ export const unbanUser = (id) => api.patch(`/admin/users/${id}/unban`);
 export const getClinicAppointments = (clinicId) => api.get(`/appointments/clinic/${clinicId}`);
 export const getUserAppointments = () => api.get('/appointments/user');
 export const cancelAppointment = (id) => api.patch(`/appointments/${id}/cancel`);
+export const getAllAppointments = () => api.get('/appointments/all');
 
 export const getProfile = () => api.get('/auth/profile');
 export const updateProfile = (data) => api.put('/auth/profile', data);

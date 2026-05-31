@@ -44,11 +44,15 @@ router.post('/', authUser, async (req, res) => {
       message: 'Appointment book ho gayi!',
       appointment: {
         id: appointment._id,
+        bookingCode: appointment.bookingCode,
         patientName,
         doctorName: doctor.name,
         clinicName: clinic.name,
+        clinicPhone: clinic.phone,
         timeSlot,
         patientPhone,
+        complaint: complaint || '',
+        appointmentDate: appointment.appointmentDate,
       },
     });
   } catch (err) {
@@ -60,6 +64,7 @@ router.get('/clinic/:clinicId', async (req, res) => {
   try {
     const appointments = await Appointment.find({ clinic: req.params.clinicId })
       .populate('doctor', 'name specialty')
+      .populate('user', 'name email phone')
       .sort({ createdAt: -1 });
     res.json({ appointments });
   } catch (err) {
@@ -72,6 +77,21 @@ router.get('/user', authUser, async (req, res) => {
     const appointments = await Appointment.find({ user: req.userId })
       .populate('clinic', 'name address phone city')
       .populate('doctor', 'name specialty fee')
+      .sort({ createdAt: -1 });
+    res.json({ appointments });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// Admin: all appointments
+const { authAdmin } = require('../middleware/auth');
+router.get('/all', authAdmin, async (req, res) => {
+  try {
+    const appointments = await Appointment.find()
+      .populate('clinic', 'name city')
+      .populate('doctor', 'name specialty')
+      .populate('user', 'name email phone')
       .sort({ createdAt: -1 });
     res.json({ appointments });
   } catch (err) {
