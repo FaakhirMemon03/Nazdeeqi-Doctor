@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
 import '../../providers/app_state.dart';
-import '../../models/doctor_model.dart';
 import '../../models/appointment_model.dart';
 import '../auth/login_screen.dart';
 

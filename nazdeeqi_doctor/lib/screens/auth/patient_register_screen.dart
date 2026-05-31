@@ -94,7 +94,7 @@ class _PatientRegisterScreenState extends State<PatientRegisterScreen> {
                 if (_errorMessage.isNotEmpty)
                   Container(
                     padding: const EdgeInsets.all(12),
-                    margin: const EdgeInsets.bottom(16),
+                    margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
                       color: AppColors.errorBg,
                       borderRadius: BorderRadius.circular(10),

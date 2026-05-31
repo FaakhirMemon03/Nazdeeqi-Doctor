@@ -268,7 +268,7 @@ class _ClinicRegisterScreenState extends State<ClinicRegisterScreen> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _selectedCity,
+                    initialValue: _selectedCity,
                     items: _cities.map((city) => DropdownMenuItem(value: city, child: Text(city))).toList(),
                     onChanged: (val) => setState(() => _selectedCity = val!),
                     decoration: const InputDecoration(
@@ -370,7 +370,7 @@ class _ClinicRegisterScreenState extends State<ClinicRegisterScreen> {
                   if (_errorMessage.isNotEmpty)
                     Container(
                       padding: const EdgeInsets.all(12),
-                      margin: const EdgeInsets.bottom(16),
+                      margin: const EdgeInsets.only(bottom: 16),
                       decoration: BoxDecoration(
                         color: AppColors.errorBg,
                         borderRadius: BorderRadius.circular(10),
@@ -427,7 +427,7 @@ class _ClinicRegisterScreenState extends State<ClinicRegisterScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.primaryLight.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.primary.withOpacity(0.2), style: BorderStyle.dashed),
+                  border: Border.all(color: AppColors.primary.withOpacity(0.2), style: BorderStyle.solid),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
