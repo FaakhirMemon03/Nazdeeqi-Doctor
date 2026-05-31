@@ -243,9 +243,7 @@ class AppState extends ChangeNotifier {
         return;
       }
 
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
+      Position position = await Geolocator.getCurrentPosition(locationSettings: const LocationSettings(accuracy: LocationAccuracy.high));
 
       final lat = position.latitude;
       final lng = position.longitude;

@@ -63,9 +63,7 @@ class _ClinicRegisterScreenState extends State<ClinicRegisterScreen> {
         permission = await Geolocator.requestPermission();
       }
       if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
-        Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.medium,
-        );
+        Position position = await Geolocator.getCurrentPosition(locationSettings: const LocationSettings(accuracy: LocationAccuracy.medium));
         setState(() {
           _latitude = position.latitude;
           _longitude = position.longitude;
