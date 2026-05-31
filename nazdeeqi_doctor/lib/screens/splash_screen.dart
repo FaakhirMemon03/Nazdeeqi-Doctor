@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../constants/colors.dart';
 import '../../providers/app_state.dart';
-import '../patient/patient_home_screen.dart';
+import 'patient/patient_home_screen.dart';
 
 /// Animated splash screen that auto-navigates to PatientHomeScreen.
 /// Shows Nazdeeqi branding with heartbeat pulse animation.
