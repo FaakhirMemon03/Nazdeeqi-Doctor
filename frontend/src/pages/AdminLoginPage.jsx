@@ -20,7 +20,7 @@ export default function AdminLoginPage() {
         navigate('/clinic-dashboard');
       } else if (res.data.role === 'user') {
         localStorage.setItem('userToken', res.data.token);
-        navigate('/user-dashboard'); // Or home page
+        navigate('/'); // Redirect to main page instead of user-dashboard
       } else {
         localStorage.setItem('adminToken', res.data.token);
         navigate('/admin');
