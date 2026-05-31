@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllClinics, getPendingClinics, approveClinic, rejectClinic, suspendClinic, getUsers, banUser, unbanUser } from '../api';
+import { getAllClinics, getPendingClinics, approveClinic, rejectClinic, suspendClinic, getUsers, banUser, unbanUser, getAllAppointments } from '../api';
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const [tab, setTab] = useState('pending');
   const [clinics, setClinics] = useState([]);
   const [users, setUsers] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
 
@@ -25,6 +26,9 @@ export default function AdminDashboard() {
       if (tab === 'users') {
         const res = await getUsers();
         setUsers(res.data.users);
+      } else if (tab === 'appointments') {
+        const res = await getAllAppointments();
+        setAppointments(res.data.appointments);
       } else {
         const res = tab === 'pending' ? await getPendingClinics() : await getAllClinics();
         setClinics(res.data.clinics);
@@ -108,7 +112,7 @@ export default function AdminDashboard() {
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '1rem', flexWrap: 'wrap' }}>
         <button
           className={`btn-sm ${tab === 'pending' ? 'btn-approve' : 'btn-outline'}`}
           onClick={() => setTab('pending')}
@@ -130,12 +134,67 @@ export default function AdminDashboard() {
         >
           Users
         </button>
+        <button
+          className={`btn-sm ${tab === 'appointments' ? 'btn-approve' : 'btn-outline'}`}
+          onClick={() => setTab('appointments')}
+          type="button"
+        >
+          All Appointments
+        </button>
       </div>
 
       {message && <div className="alert alert-success">{message}</div>}
 
       {loading ? (
         <div className="loading">Loading...</div>
+      ) : tab === 'appointments' ? (
+        appointments.length === 0 ? (
+          <div className="alert alert-info">Koi appointment nahi mili</div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Patient</th>
+                  <th>Clinic</th>
+                  <th>Doctor & Time</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {appointments.map((a) => (
+                  <tr key={a._id}>
+                    <td>
+                      <span style={{ fontFamily: 'monospace', fontWeight: 700, color: '#0F6E56', background: '#E1F5EE', padding: '3px 8px', borderRadius: '4px' }}>
+                        {a.bookingCode || 'N/A'}
+                      </span>
+                    </td>
+                    <td>
+                      <strong>{a.patientName}</strong><br />
+                      <small>{a.patientPhone}</small>
+                      {a.user?.email && <><br /><small style={{ color: '#888' }}>{a.user.email}</small></>}
+                    </td>
+                    <td>
+                      <strong>{a.clinic?.name || 'Unknown'}</strong><br />
+                      <small>{a.clinic?.city}</small>
+                    </td>
+                    <td>
+                      {a.doctor?.name || 'Unknown'}<br />
+                      <span style={{ fontWeight: 500, color: '#0F6E56' }}>{a.timeSlot}</span>
+                      <br /><small>{new Date(a.appointmentDate).toLocaleDateString()}</small>
+                    </td>
+                    <td>
+                      <span className={`status-badge status-${a.status === 'confirmed' ? 'approved' : a.status === 'cancelled' ? 'rejected' : 'pending'}`}>
+                        {a.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
       ) : tab === 'users' ? (
         users.length === 0 ? (
           <div className="alert alert-info">Koi user nahi mila</div>
