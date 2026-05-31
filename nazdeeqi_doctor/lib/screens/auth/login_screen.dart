@@ -52,12 +52,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
       // Role based routing
       if (_selectedRole == 'admin') {
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const AdminDashboard()),
         );
       } else if (_selectedRole == 'clinic') {
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const ClinicDashboard()),
         );
