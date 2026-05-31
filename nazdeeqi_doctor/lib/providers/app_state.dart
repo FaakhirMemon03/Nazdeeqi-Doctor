@@ -6,6 +6,7 @@ import '../models/doctor_model.dart';
 import '../models/appointment_model.dart';
 import '../models/user_model.dart';
 import '../services/service_locator.dart';
+import '../services/database_service.dart';
 
 class AppState extends ChangeNotifier {
   bool _isLoading = false;
