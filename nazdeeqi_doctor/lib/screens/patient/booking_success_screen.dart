@@ -15,12 +15,11 @@ class BookingSuccessScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 24),
               const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 80),
               const SizedBox(height: 16),
               const Text(
@@ -115,18 +114,13 @@ class BookingSuccessScreen extends StatelessWidget {
                           if (appointment.complaint.isNotEmpty)
                             _buildTicketRow('Bimari / Complaint:', appointment.complaint, isMultiline: true),
                           const Divider(height: 32, thickness: 1, color: Colors.grey),
-                          // Simulated Barcode graphic representing professional ticket invoice
+                          // Simulated Barcode
                           Column(
                             children: [
                               Container(
                                 height: 36,
                                 width: double.infinity,
                                 decoration: BoxDecoration(
-                                  image: const DecorationImage(
-                                    image: AssetImage('assets/images/barcode_mock.png'), // placeholder safety
-                                    fit: BoxFit.cover,
-                                    opacity: 0.05,
-                                  ),
                                   color: Colors.grey.shade100,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
@@ -145,15 +139,15 @@ class BookingSuccessScreen extends StatelessWidget {
                               const SizedBox(height: 6),
                               const Text('Nazdeeqi Doctor Mobile System', style: TextStyle(fontSize: 9, color: AppColors.textLight)),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
-              // Warning alerts
+              const SizedBox(height: 24),
+              // Warning alert
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(color: AppColors.warningBg, borderRadius: BorderRadius.circular(12)),
@@ -181,7 +175,7 @@ class BookingSuccessScreen extends StatelessWidget {
                 },
                 child: const Text('Wapas Home Par Jayein'),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
             ],
           ),
         ),
