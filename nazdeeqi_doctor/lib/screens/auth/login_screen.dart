@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+
   String _selectedRole = 'patient'; // 'patient' | 'clinic' | 'admin'
   bool _obscurePassword = true;
   String _errorMessage = '';
@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final state = Provider.of<AppState>(context, listen: false);
-    
+
     try {
       await state.login(
         _emailController.text.trim(),
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
 
-      // Role based routing
+      // Role based routing — push so user can go Back to Login if needed
       if (_selectedRole == 'admin') {
         Navigator.push(
           context,
@@ -63,7 +63,6 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         // Patient: pop back to wherever they came from (PatientHomeScreen/ClinicDetailScreen)
-        // The calling screen will refresh via setState on return
         Navigator.pop(context);
       }
     } catch (e) {
@@ -73,23 +72,16 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
 
     return Scaffold(
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return SingleChildScrollView(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Form(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
