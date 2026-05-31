@@ -25,6 +25,7 @@ class AppState extends ChangeNotifier {
 
   List<DoctorModel> _activeClinicDoctors = [];
   List<AppointmentModel> _appointments = [];
+  List<UserModel> _allUsers = [];
 
   // Getters
   bool get isLoading => _isLoading;
@@ -40,6 +41,7 @@ class AppState extends ChangeNotifier {
   String get locationStatus => _locationStatus;
   List<DoctorModel> get activeClinicDoctors => _activeClinicDoctors;
   List<AppointmentModel> get appointments => _appointments;
+  List<UserModel> get allUsers => _allUsers;
 
   // Active platform stats counters
   int get totalClinicsCount => _clinics.where((c) => c.status == 'approved').length;
@@ -401,5 +403,25 @@ class AppState extends ChangeNotifier {
   Future<void> rejectClinic(String clinicId, String reason) async {
     await ServiceLocator.database.rejectClinic(clinicId, reason);
     await loadClinics();
+  }
+
+  // Admin: Load all registered patients
+  Future<void> loadAllUsers() async {
+    _allUsers = await ServiceLocator.database.getAllUsers();
+    notifyListeners();
+  }
+
+  // Patient: Update own profile
+  Future<void> updateUserProfile(String name, String phone) async {
+    if (_currentUserUid == null) return;
+    setLoading(true);
+    try {
+      await ServiceLocator.database.updateUserProfile(_currentUserUid!, name, phone);
+      _patientProfile = _patientProfile?.copyWith(name: name, phone: phone) ??
+          UserModel(uid: _currentUserUid!, name: name, email: _currentUserEmail!, phone: phone, createdAt: DateTime.now());
+      notifyListeners();
+    } finally {
+      setLoading(false);
+    }
   }
 }
