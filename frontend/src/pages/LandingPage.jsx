@@ -88,7 +88,15 @@ export default function LandingPage() {
         {locationStatus && <p className="alert alert-info">{locationStatus}</p>}
 
         {loading ? (
-          <div className="loading">Clinics load ho rahi hain...</div>
+          <div className="ndq-loader">
+            <div className="ndq-loader-icon">
+              <div className="ndq-loader-ring-outer" />
+              <div className="ndq-loader-ring" />
+              <i className="ti ti-heartbeat ndq-loader-heart">♥</i>
+            </div>
+            <div className="ndq-loader-text">Nazdeeqi Doctor</div>
+            <div className="ndq-loader-sub">Clinics load ho rahi hain...</div>
+          </div>
         ) : clinics.length === 0 ? (
           <div className="alert alert-info">
             {locationStatus.includes('qareeb') 

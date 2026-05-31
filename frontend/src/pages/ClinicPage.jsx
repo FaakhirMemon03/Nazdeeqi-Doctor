@@ -76,7 +76,19 @@ export default function ClinicPage() {
     }
   }
 
-  if (loading) return <div className="page-container loading">Loading...</div>;
+  if (loading) return (
+    <div className="page-container">
+      <div className="ndq-loader">
+        <div className="ndq-loader-icon">
+          <div className="ndq-loader-ring-outer" />
+          <div className="ndq-loader-ring" />
+          <i className="ti ti-heartbeat ndq-loader-heart">♥</i>
+        </div>
+        <div className="ndq-loader-text">Nazdeeqi Doctor</div>
+        <div className="ndq-loader-sub">Clinic details load ho rahi hain...</div>
+      </div>
+    </div>
+  );
   if (error) {
     return (
       <div className="page-container">
