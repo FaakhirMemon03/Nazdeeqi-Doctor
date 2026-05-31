@@ -310,7 +310,7 @@ class _ClinicDetailScreenState extends State<ClinicDetailScreen> {
                 // Section: Available Slots Grid
                 if (_selectedDoctor != null) ...[
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.between,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const Text('Time Slot', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                       Text(

@@ -165,7 +165,7 @@ class _ExploreClinicsTabState extends State<ExploreClinicsTab> {
                     const SizedBox(height: 24),
                     // Counter Statistics
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.between,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildStatBox('${state.totalClinicsCount}+', 'Registered Clinics'),
                         _buildStatBox('${state.totalDoctorsCount}+', 'Active Doctors'),
@@ -181,7 +181,7 @@ class _ExploreClinicsTabState extends State<ExploreClinicsTab> {
               const SizedBox(height: 28),
               // Search Header with Meri Location button
               Row(
-                mainAxisAlignment: MainAxisAlignment.between,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
                     'Qareeb ki Clinics',

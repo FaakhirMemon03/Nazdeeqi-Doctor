@@ -61,7 +61,7 @@ class BookingSuccessScreen extends StatelessWidget {
                         ),
                       ),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.between,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text(
                             'BOOKING SLIP',
