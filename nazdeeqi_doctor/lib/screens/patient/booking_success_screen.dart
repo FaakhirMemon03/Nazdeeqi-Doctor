@@ -14,12 +14,13 @@ class BookingSuccessScreen extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 24),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 24),
               const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 80),
               const SizedBox(height: 16),
               const Text(
@@ -33,7 +34,7 @@ class BookingSuccessScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 13, color: AppColors.textLight),
               ),
-              const Spacer(),
+              const SizedBox(height: 32),
               // Premium Invoice Receipt Medical Ticket
               Container(
                 decoration: BoxDecoration(
@@ -151,7 +152,7 @@ class BookingSuccessScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const Spacer(),
+              const SizedBox(height: 32),
               // Warning alerts
               Container(
                 padding: const EdgeInsets.all(12),

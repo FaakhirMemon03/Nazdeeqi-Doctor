@@ -108,5 +108,4 @@ class FirebaseDatabaseService implements DatabaseService {
   @override
   Future<void> updateClinicDetails(ClinicModel clinic) async {
     await _firestore.collection('clinics').doc(clinic.uid).update(clinic.toMap());
-  }
-        phone: '03708433612',
+}
