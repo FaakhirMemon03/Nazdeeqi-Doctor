@@ -91,7 +91,9 @@ export default function LandingPage() {
           <div className="loading">Clinics load ho rahi hain...</div>
         ) : clinics.length === 0 ? (
           <div className="alert alert-info">
-            Abhi koi approved clinic nahi. Pehli clinic register karein!
+            {locationStatus.includes('qareeb') 
+              ? 'Aapke qareeb (3km ke andar) koi clinic nahi mili. Location badal kar try karein.'
+              : 'Abhi koi approved clinic nahi. Pehli clinic register karein!'}
           </div>
         ) : (
           <div className="clinic-grid">

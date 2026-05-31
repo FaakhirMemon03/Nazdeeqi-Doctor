@@ -30,7 +30,8 @@ router.get('/nearby', async (req, res) => {
     });
 
     if (lat && lng) {
-      clinics.sort((a, b) => (a.distanceKm ?? 999) - (b.distanceKm ?? 999));
+      clinics = clinics.filter(c => c.distanceKm != null && c.distanceKm <= 3);
+      clinics.sort((a, b) => a.distanceKm - b.distanceKm);
     }
 
     res.json({ clinics, total: clinics.length });
