@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
 import '../../providers/app_state.dart';
-import '../../services/service_locator.dart';
 
 import '../clinic/clinic_dashboard.dart';
 import '../admin/admin_dashboard.dart';
