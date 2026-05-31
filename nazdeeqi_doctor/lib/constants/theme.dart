@@ -14,22 +14,22 @@ class AppTheme {
         secondary: AppColors.secondary,
         surface: AppColors.background,
       ),
-      textTheme: GoogleFonts.outfitTextTheme().copyWith(
-        displayLarge: GoogleFonts.outfit(
+      textTheme: GoogleFonts.dmSansTextTheme().copyWith(
+        displayLarge: GoogleFonts.playfairDisplay(
           fontSize: 32,
           fontWeight: FontWeight.bold,
           color: AppColors.textDark,
         ),
-        titleLarge: GoogleFonts.outfit(
+        titleLarge: GoogleFonts.playfairDisplay(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: AppColors.textDark,
         ),
-        bodyLarge: GoogleFonts.outfit(
+        bodyLarge: GoogleFonts.dmSans(
           fontSize: 16,
           color: AppColors.textDark,
         ),
-        bodyMedium: GoogleFonts.outfit(
+        bodyMedium: GoogleFonts.dmSans(
           fontSize: 14,
           color: AppColors.textLight,
         ),
@@ -38,7 +38,7 @@ class AppTheme {
         backgroundColor: AppColors.background,
         elevation: 0,
         centerTitle: true,
-        titleTextStyle: GoogleFonts.outfit(
+        titleTextStyle: GoogleFonts.playfairDisplay(
           color: AppColors.textDark,
           fontSize: 20,
           fontWeight: FontWeight.w600,
@@ -73,8 +73,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.error, width: 1),
         ),
-        labelStyle: GoogleFonts.outfit(color: AppColors.textLight),
-        hintStyle: GoogleFonts.outfit(color: Colors.grey.shade400, fontSize: 14),
+        labelStyle: GoogleFonts.dmSans(color: AppColors.textLight),
+        hintStyle: GoogleFonts.dmSans(color: Colors.grey.shade400, fontSize: 14),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -85,7 +85,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: GoogleFonts.outfit(
+          textStyle: GoogleFonts.dmSans(
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
