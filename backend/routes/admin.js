@@ -50,23 +50,6 @@ router.patch('/clinics/:id/approve', authAdmin, async (req, res) => {
     clinic.status = 'approved';
     await clinic.save();
 
-    // Seed default doctors if none exist
-    const existingDoctors = await Doctor.countDocuments({ clinic: clinic._id });
-    if (existingDoctors === 0) {
-      const defaults = [
-        { name: 'Dr. Sana Malik', specialty: 'General Physician', fee: 800, avatarColor: '#E1F5EE', textColor: '#0F6E56' },
-        { name: 'Dr. Ahmed Raza', specialty: 'Cardiologist', fee: 1500, avatarColor: '#E6F1FB', textColor: '#185FA5' },
-        { name: 'Dr. Nida Fatima', specialty: 'Dermatologist', fee: 1200, avatarColor: '#FBEAF0', textColor: '#993556' },
-      ];
-      await Doctor.insertMany(
-        defaults.map((d) => ({
-          ...d,
-          clinic: clinic._id,
-          initials: getInitials(d.name),
-        }))
-      );
-    }
-
     res.json({
       message: 'Clinic approved!',
     });

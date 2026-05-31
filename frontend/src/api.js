@@ -26,6 +26,12 @@ export const adminLogin = login; // Alias for old code
 export const forgotPassword = (email) => api.post('/auth/forgot-password', { email });
 export const resetPassword = (token, password) => api.post(`/auth/reset-password/${token}`, { password });
 
+// Doctors
+export const getClinicDoctors = () => api.get('/doctors');
+export const addDoctor = (data) => api.post('/doctors', data);
+export const updateDoctor = (id, data) => api.patch(`/doctors/${id}`, data);
+export const deleteDoctor = (id) => api.delete(`/doctors/${id}`);
+
 // Admin Actions
 export const getAllClinics = () => api.get('/admin/clinics/all');
 export const getPendingClinics = () => api.get('/admin/clinics/pending');
