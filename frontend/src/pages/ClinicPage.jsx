@@ -158,32 +158,43 @@ export default function ClinicPage() {
 
           <div className="cl-section">
             <p className="cl-section-title">Aapki details</p>
-            <div className="cl-form-row">
-              <input
-                type="text"
-                placeholder="Aapka naam"
-                value={form.name}
-                onChange={(e) => setForm({ ...form, name: e.target.value })}
-              />
-              <input
-                type="tel"
-                placeholder="Phone number"
-                value={form.phone}
-                onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              />
-            </div>
-            <div className="cl-form-full">
-              <input
-                type="text"
-                placeholder="Takleef kya hai? (Optional)"
-                value={form.complaint}
-                onChange={(e) => setForm({ ...form, complaint: e.target.value })}
-              />
-            </div>
-            <button className="cl-cta" onClick={handleBook} disabled={booking}>
-              <i className="ti ti-calendar-check" aria-hidden="true" />{' '}
-              {booking ? 'Booking ho rahi hai...' : 'Appointment Book Karein'}
-            </button>
+            {!localStorage.getItem('userToken') ? (
+              <div className="alert alert-info" style={{ textAlign: 'center', padding: '2rem' }}>
+                <p style={{ margin: '0 0 1rem 0', fontWeight: 500 }}>Appointment book karne ke liye login zaroori hai</p>
+                <Link to="/login" className="btn-sm btn-approve" style={{ padding: '10px 20px', display: 'inline-block', textDecoration: 'none' }}>
+                  Login / Signup
+                </Link>
+              </div>
+            ) : (
+              <>
+                <div className="cl-form-row">
+                  <input
+                    type="text"
+                    placeholder="Aapka naam"
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  />
+                  <input
+                    type="tel"
+                    placeholder="Phone number"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  />
+                </div>
+                <div className="cl-form-full">
+                  <input
+                    type="text"
+                    placeholder="Takleef kya hai? (Optional)"
+                    value={form.complaint}
+                    onChange={(e) => setForm({ ...form, complaint: e.target.value })}
+                  />
+                </div>
+                <button className="cl-cta" onClick={handleBook} disabled={booking}>
+                  <i className="ti ti-calendar-check" aria-hidden="true" />{' '}
+                  {booking ? 'Booking ho rahi hai...' : 'Appointment Book Karein'}
+                </button>
+              </>
+            )}
           </div>
 
           <div className="cl-section">
