@@ -21,8 +21,75 @@ export default function ClinicDashboard() {
   const [clinicInfo, setClinicInfo] = useState({ isOpenToday: true, timings: '' });
   const [updatingSettings, setUpdatingSettings] = useState(false);
 
+  // In-app Notification toast State
+  const [notification, setNotification] = useState({ show: false, message: '' });
+
   // Doctor Form
   const [docForm, setDocForm] = useState({ name: '', specialty: SPECIALTIES[0], fee: '' });
+
+  // 1. Play Medical Notification Sound (Friendly Double Beep using Web Audio API)
+  function playNotificationSound() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.12);
+      
+      setTimeout(() => {
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(880, ctx.currentTime); // A5
+        gain2.gain.setValueAtTime(0.08, ctx.currentTime);
+        osc2.start();
+        osc2.stop(ctx.currentTime + 0.18);
+      }, 150);
+    } catch (e) {
+      console.log('Audio Context Error:', e);
+    }
+  }
+
+  // 2. Desktop Push Notification
+  function triggerDesktopNotification(title, body) {
+    if (Notification.permission === 'granted') {
+      new Notification(title, { body });
+    }
+  }
+
+  // 3. Polling new appointments
+  async function pollAppointments(clinicId) {
+    try {
+      const res = await getClinicAppointments(clinicId);
+      const newApps = res.data.appointments;
+      
+      setAppointments(prevApps => {
+        if (prevApps.length > 0) {
+          const reallyNew = newApps.filter(na => !prevApps.some(oa => oa._id === na._id));
+          if (reallyNew.length > 0) {
+            playNotificationSound();
+            reallyNew.forEach(na => {
+              const docName = na.doctor?.name || 'Doctor';
+              const msg = `Patient ${na.patientName} ne ${docName} ke liye ${na.timeSlot} ki appointment book kar li hai!`;
+              setNotification({ show: true, message: msg });
+              triggerDesktopNotification('🔔 Nayi Appointment Book Hui!', msg);
+            });
+          }
+        }
+        return newApps;
+      });
+    } catch (e) {
+      console.log('Error polling appointments:', e);
+    }
+  }
 
   useEffect(() => {
     const token = localStorage.getItem('clinicToken');
@@ -32,6 +99,18 @@ export default function ClinicDashboard() {
       return;
     }
     loadData(clinicId);
+
+    // Request Notification permission
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    // Start Polling every 10 seconds
+    const interval = setInterval(() => {
+      pollAppointments(clinicId);
+    }, 10000);
+
+    return () => clearInterval(interval);
   }, [tab]);
 
   async function loadData(clinicId) {

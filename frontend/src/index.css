@@ -221,6 +221,11 @@ input:focus, select:focus, textarea:focus {
   to { transform: rotate(360deg); }
 }
 
+@keyframes slideIn {
+  from { transform: translateX(120%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
 @media (max-width: 768px) {
   .cl-form-row { grid-template-columns: 1fr; }
   .cl-features { grid-template-columns: 1fr; }
