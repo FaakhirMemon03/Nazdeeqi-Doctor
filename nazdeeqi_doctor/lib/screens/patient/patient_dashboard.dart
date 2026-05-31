@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
 import '../../providers/app_state.dart';
 import '../../models/appointment_model.dart';
+import 'edit_profile_screen.dart';
 
 class PatientDashboard extends StatelessWidget {
   const PatientDashboard({super.key});
@@ -22,13 +23,60 @@ class PatientDashboard extends StatelessWidget {
         children: [
           Container(
             color: Colors.white,
-            child: const TabBar(
-              labelColor: AppColors.primary,
-              unselectedLabelColor: AppColors.textLight,
-              indicatorColor: AppColors.primary,
-              tabs: [
-                Tab(text: 'Upcoming Slots'),
-                Tab(text: 'Past History'),
+            child: Column(
+              children: [
+                // Profile quick-info header
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: const BoxDecoration(
+                          color: AppColors.primaryLight,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.person_rounded, color: AppColors.primary, size: 22),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              state.patientProfile?.name ?? 'Patient',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark),
+                            ),
+                            Text(
+                              state.currentUserEmail ?? '',
+                              style: const TextStyle(fontSize: 11, color: AppColors.textLight),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextButton.icon(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+                        ),
+                        icon: const Icon(Icons.edit_rounded, size: 15),
+                        label: const Text('Edit Profile', style: TextStyle(fontSize: 12)),
+                        style: TextButton.styleFrom(foregroundColor: AppColors.primary),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                const TabBar(
+                  labelColor: AppColors.primary,
+                  unselectedLabelColor: AppColors.textLight,
+                  indicatorColor: AppColors.primary,
+                  tabs: [
+                    Tab(text: 'Upcoming Slots'),
+                    Tab(text: 'Past History'),
+                  ],
+                ),
               ],
             ),
           ),

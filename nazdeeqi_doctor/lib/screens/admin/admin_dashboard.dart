@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
 import '../../providers/app_state.dart';
 import '../../models/clinic_model.dart';
+import '../../models/user_model.dart';
 import '../auth/login_screen.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -18,7 +19,11 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
+    // Load users when admin dashboard opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AppState>(context, listen: false).loadAllUsers();
+    });
   }
 
   @override
@@ -71,6 +76,7 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
           tabs: const [
             Tab(icon: Icon(Icons.pending_actions_rounded), text: 'Pending Approval'),
             Tab(icon: Icon(Icons.business_rounded), text: 'All Clinics'),
+            Tab(icon: Icon(Icons.people_rounded), text: 'All Users'),
           ],
         ),
       ),
@@ -79,6 +85,7 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
         children: [
           _buildPendingTab(context, state, pending),
           _buildAllClinicsTab(context, state, allClinics),
+          _buildAllUsersTab(context, state),
         ],
       ),
     );
@@ -380,6 +387,120 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(10)),
       child: Text(status.toUpperCase(), style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: fg)),
+    );
+  }
+
+  // -------------------------------------------------------------
+  // 3. ALL USERS TAB
+  // -------------------------------------------------------------
+  Widget _buildAllUsersTab(BuildContext context, AppState state) {
+    final users = state.allUsers;
+
+    if (users.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.people_outline_rounded, size: 56, color: Colors.grey.shade300),
+            const SizedBox(height: 12),
+            const Text('Koi registered users nahi mile.',
+                style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textLight)),
+            const SizedBox(height: 8),
+            ElevatedButton.icon(
+              onPressed: () => state.loadAllUsers(),
+              icon: const Icon(Icons.refresh_rounded, size: 16),
+              label: const Text('Refresh'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Text('Kul Users: ${users.length}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.textDark)),
+              const Spacer(),
+              IconButton(
+                onPressed: () => state.loadAllUsers(),
+                icon: const Icon(Icons.refresh_rounded, color: AppColors.primary, size: 20),
+                tooltip: 'Refresh',
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            itemCount: users.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              final user = users[index];
+              return _buildUserCard(user);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserCard(UserModel user) {
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: const BoxDecoration(
+                color: AppColors.primaryLight,
+                shape: BoxShape.circle,
+              ),
+              child: Center(
+                child: Text(
+                  user.name.isNotEmpty ? user.name[0].toUpperCase() : 'U',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(user.name.isNotEmpty ? user.name : '(Name nahi diya)',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: AppColors.textDark)),
+                  const SizedBox(height: 2),
+                  Text(user.email, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+                  if (user.phone.isNotEmpty)
+                    Text(user.phone, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppColors.successBg,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                user.role.toUpperCase(),
+                style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.success),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
