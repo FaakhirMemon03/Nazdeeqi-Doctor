@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "265291314133",
+    "project_id": "nazdeeqi-doctor",
+    "storage_bucket": "nazdeeqi-doctor.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265291314133:android:efc9642a48d27e028cc35c",
+        "android_client_info": {
+          "package_name": "com.nazdeeqidoctor.nazdeeqi_doctor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqiKkd4h7hj7aFrgh_ASQpkNe6-Qt2anE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
