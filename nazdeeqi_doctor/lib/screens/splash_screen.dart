@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../constants/colors.dart';
 import '../../providers/app_state.dart';
 import '../patient/patient_home_screen.dart';
@@ -138,9 +139,9 @@ class _SplashScreenState extends State<SplashScreen>
                     const SizedBox(height: 28),
 
                     // App name
-                    const Text(
+                    Text(
                       'Nazdeeqi Doctor',
-                      style: TextStyle(
+                      style: GoogleFonts.playfairDisplay(
                         fontSize: 34,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -152,7 +153,7 @@ class _SplashScreenState extends State<SplashScreen>
                     // Tagline
                     Text(
                       'Apna Doctor, Apni Marzi',
-                      style: TextStyle(
+                      style: GoogleFonts.playfairDisplay(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: Colors.teal.shade100,

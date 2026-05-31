@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../../constants/colors.dart';
 import '../../constants/nazdeeqi_loader.dart';
 import '../../providers/app_state.dart';
@@ -251,9 +252,9 @@ class _ExploreClinicsTabState extends State<ExploreClinicsTab> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       'Apna Doctor,\nApni Marzi',
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white, height: 1.2),
+                      style: GoogleFonts.playfairDisplay(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white, height: 1.2),
                     ),
                     const SizedBox(height: 6),
                     const Text(
