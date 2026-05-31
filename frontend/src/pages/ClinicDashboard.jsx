@@ -10,12 +10,16 @@ const SPECIALTIES = [
 
 export default function ClinicDashboard() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState('appointments'); // appointments | doctors
+  const [tab, setTab] = useState('appointments'); // appointments | doctors | settings
   const [appointments, setAppointments] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [message, setMessage] = useState('');
+
+  // Settings State
+  const [clinicInfo, setClinicInfo] = useState({ isOpenToday: true, timings: '' });
+  const [updatingSettings, setUpdatingSettings] = useState(false);
 
   // Doctor Form
   const [docForm, setDocForm] = useState({ name: '', specialty: SPECIALTIES[0], fee: '' });
@@ -36,14 +40,34 @@ export default function ClinicDashboard() {
       if (tab === 'appointments') {
         const res = await getClinicAppointments(clinicId);
         setAppointments(res.data.appointments);
-      } else {
+      } else if (tab === 'doctors') {
         const res = await getClinicDoctors();
         setDoctors(res.data.doctors);
+      } else if (tab === 'settings') {
+        const res = await getClinicById(clinicId);
+        setClinicInfo({
+          isOpenToday: res.data.clinic.isOpenToday !== false,
+          timings: res.data.clinic.timings || '',
+        });
       }
     } catch {
       navigate('/login');
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleUpdateSettings(e) {
+    e.preventDefault();
+    setUpdatingSettings(true);
+    setMessage('');
+    try {
+      await updateClinicSettings(clinicInfo);
+      setMessage('Clinic settings update ho gayin!');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Error updating settings');
+    } finally {
+      setUpdatingSettings(false);
     }
   }
 
@@ -110,6 +134,13 @@ export default function ClinicDashboard() {
           type="button"
         >
           Manage Doctors
+        </button>
+        <button
+          className={`btn-sm ${tab === 'settings' ? 'btn-approve' : 'btn-outline'}`}
+          onClick={() => setTab('settings')}
+          type="button"
+        >
+          Clinic Settings
         </button>
       </div>
 
@@ -191,7 +222,7 @@ export default function ClinicDashboard() {
             </div>
           )}
         </>
-      ) : (
+      ) : tab === 'doctors' ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
           {/* Add Doctor Form */}
           <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
@@ -269,6 +300,49 @@ export default function ClinicDashboard() {
               </div>
             )}
           </div>
+        </div>
+      ) : (
+        <div style={{ maxWidth: '600px', margin: '0 auto', background: 'white', padding: '2rem', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+          <h3 style={{ marginTop: 0, marginBottom: '1.5rem', color: '#04342C' }}>Clinic Status & Timings Settings</h3>
+          <form onSubmit={handleUpdateSettings}>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Clinic Status Today</label>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setClinicInfo({ ...clinicInfo, isOpenToday: true })}
+                  className={`btn-sm ${clinicInfo.isOpenToday ? 'btn-approve' : 'btn-outline'}`}
+                  style={{ flex: 1, padding: '12px', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                >
+                  <i className="ti ti-circle-check" /> ✅ Aaj Open Hai
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setClinicInfo({ ...clinicInfo, isOpenToday: false })}
+                  className={`btn-sm ${!clinicInfo.isOpenToday ? 'btn-reject' : 'btn-outline'}`}
+                  style={{ flex: 1, padding: '12px', fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                >
+                  <i className="ti ti-circle-x" /> ❌ Aaj Closed Hai
+                </button>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>Clinic Timings & Details</label>
+              <textarea
+                required
+                rows="4"
+                value={clinicInfo.timings}
+                onChange={(e) => setClinicInfo({ ...clinicInfo, timings: e.target.value })}
+                placeholder="Jaise: Mon-Sat: 9:00 AM - 9:00 PM (Doctor sahb shaam 6:00 baje aate hain)"
+                style={{ width: '100%', padding: '12px', border: '1.5px solid #cbd5e1', borderRadius: '8px', outline: 'none', resize: 'vertical', fontSize: '14px', boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <button type="submit" className="btn-sm btn-approve" style={{ width: '100%', padding: '12px', fontSize: '14px' }} disabled={updatingSettings}>
+              {updatingSettings ? 'Updating...' : 'Settings Save Karein'}
+            </button>
+          </form>
         </div>
       )}
     </div>
