@@ -190,6 +190,36 @@ export default function ClinicDashboard() {
 
   return (
     <div className="admin-layout">
+      {notification.show && (
+        <div style={{
+          position: 'fixed',
+          top: '20px',
+          right: '20px',
+          background: 'linear-gradient(135deg, #0F6E56 0%, #085041 100%)',
+          color: 'white',
+          boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+          borderRadius: '12px',
+          zIndex: 9999,
+          padding: '1.2rem',
+          maxWidth: '360px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          animation: 'slideIn 0.3s ease-out'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <strong style={{ fontSize: '15px' }}>🔔 Nayi Appointment!</strong>
+            <button
+              onClick={() => setNotification({ show: false, message: '' })}
+              style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: '18px', padding: 0, fontWeight: 'bold' }}
+            >
+              ×
+            </button>
+          </div>
+          <span style={{ fontSize: '13px', lineHeight: '1.4' }}>{notification.message}</span>
+        </div>
+      )}
+
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '8px' }}>
         <h1 style={{ fontFamily: "'Playfair Display', serif", color: '#04342C', margin: 0 }}>
           Clinic Dashboard
