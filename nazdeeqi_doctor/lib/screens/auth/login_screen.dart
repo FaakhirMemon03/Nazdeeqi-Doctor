@@ -79,15 +79,17 @@ class _LoginScreenState extends State<LoginScreen> {
     final state = Provider.of<AppState>(context);
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            color: AppColors.background,
-          ),
-          child: SafeArea(
-            child: Form(
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: constraints.maxHeight,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Form(
               key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -116,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  const Spacer(),
+                  const SizedBox(height: 32),
                   const Text(
                     'Khush Amdeed',
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.textDark),
@@ -234,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ],
                     ),
-                  const Spacer(),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),
