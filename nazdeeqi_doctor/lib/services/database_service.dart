@@ -17,6 +17,8 @@ abstract class DatabaseService {
   Future<void> approveClinic(String clinicId);
   Future<void> rejectClinic(String clinicId, String reason);
   Future<void> updateClinicDetails(ClinicModel clinic);
+  Future<List<UserModel>> getAllUsers();
+  Future<void> updateUserProfile(String uid, String name, String phone);
 }
 
 // -------------------------------------------------------------
@@ -108,4 +110,26 @@ class FirebaseDatabaseService implements DatabaseService {
   @override
   Future<void> updateClinicDetails(ClinicModel clinic) async {
     await _firestore.collection('clinics').doc(clinic.uid).update(clinic.toMap());
+  }
+
+  // Get a single user by uid from Firestore
+  Future<UserModel?> getUserById(String uid) async {
+    final doc = await _firestore.collection('users').doc(uid).get();
+    if (!doc.exists) return null;
+    return UserModel.fromMap(doc.data()!);
+  }
+
+  @override
+  Future<List<UserModel>> getAllUsers() async {
+    final snapshot = await _firestore.collection('users').get();
+    return snapshot.docs.map((doc) => UserModel.fromMap(doc.data())).toList();
+  }
+
+  @override
+  Future<void> updateUserProfile(String uid, String name, String phone) async {
+    await _firestore.collection('users').doc(uid).update({
+      'name': name,
+      'phone': phone,
+    });
+  }
 }
