@@ -31,6 +31,18 @@ class UserModel {
     };
   }
 
+  UserModel copyWith({String? name, String? phone, String? status}) {
+    return UserModel(
+      uid: uid,
+      name: name ?? this.name,
+      email: email,
+      phone: phone ?? this.phone,
+      role: role,
+      status: status ?? this.status,
+      createdAt: createdAt,
+    );
+  }
+
   factory UserModel.fromMap(Map<String, dynamic> map) {
     DateTime parseDate(dynamic val) {
       if (val is Timestamp) return val.toDate();
