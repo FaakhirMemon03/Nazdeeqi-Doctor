@@ -73,18 +73,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  // Help seed loader for Demo Mode
-  void _fillMockCredentials(String email, String password) {
-    setState(() {
-      _emailController.text = email;
-      _passwordController.text = password;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
-    final isDemo = ServiceLocator.isDemoMode;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -243,49 +235,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                   const Spacer(),
-                  // Premium Sandbox guidelines card
-                  if (isDemo)
-                    Card(
-                      color: AppColors.primaryLight.withValues(alpha: 0.7),
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: AppColors.primary.withValues(alpha: 0.1)),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.bolt_rounded, color: AppColors.primary, size: 18),
-                                const SizedBox(width: 6),
-                                Text(
-                                  'Demo Sandbox Helper (Click to autofill):',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.primaryDark,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              children: [
-                                _buildMockFillBadge('Admin', 'admin@nazdeeqi.com', 'admin123', 'admin'),
-                                _buildMockFillBadge('Clinic', 'alkhidmat@nazdeeqi.com', 'pass123', 'clinic'),
-                                _buildMockFillBadge('Patient', 'faakhir@gmail.com', 'pass123', 'patient'),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 16),
                 ],
               ),
             ),
@@ -324,29 +273,6 @@ class _LoginScreenState extends State<LoginScreen> {
               color: isSelected ? AppColors.primary : AppColors.textLight,
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMockFillBadge(String label, String email, String password, String role) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedRole = role;
-        });
-        _fillMockCredentials(email, password);
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
-        ),
-        child: Text(
-          label,
-          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
         ),
       ),
     );

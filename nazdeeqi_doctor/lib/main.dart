@@ -9,17 +9,16 @@ import 'services/service_locator.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  bool firebaseAvailable = false;
   try {
     await Firebase.initializeApp();
-    firebaseAvailable = true;
   } catch (e) {
     debugPrint("Firebase init failed or credentials missing: $e");
-    debugPrint("Falling back to Demo Mode.");
+    // Throwing so developer knows Firebase is strictly required
+    rethrow;
   }
 
-  // Initialize services directly — no demo mode selector screen needed
-  ServiceLocator.init(demoMode: !firebaseAvailable);
+  // Initialize strictly Firebase services
+  ServiceLocator.init();
 
   runApp(
     MultiProvider(
