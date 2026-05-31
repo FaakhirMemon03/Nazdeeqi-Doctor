@@ -222,21 +222,3 @@ class _ArcPainter extends CustomPainter {
       sweepAngle != oldDelegate.sweepAngle;
 }
 
-/// Workaround: AnimatedBuilder is the same as AnimatedWidget builder.
-/// Flutter uses AnimatedBuilder, let's ensure we have a proper builder alias.
-class AnimatedBuilder extends AnimatedWidget {
-  final Widget Function(BuildContext context, Widget? child) builder;
-  final Widget? child;
-
-  const AnimatedBuilder({
-    super.key,
-    required Animation<double> animation,
-    required this.builder,
-    this.child,
-  }) : super(listenable: animation);
-
-  @override
-  Widget build(BuildContext context) {
-    return builder(context, child);
-  }
-}

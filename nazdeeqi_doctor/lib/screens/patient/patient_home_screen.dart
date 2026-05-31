@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
+import '../../constants/nazdeeqi_loader.dart';
 import '../../providers/app_state.dart';
 import '../../models/clinic_model.dart';
 import 'clinic_detail_screen.dart';
 import 'patient_dashboard.dart';
 import '../auth/login_screen.dart';
 
+/// Main landing screen — visible to ALL users (logged in or not).
+/// Shows clinics, doctors, everything. Login only needed for booking.
 class PatientHomeScreen extends StatefulWidget {
   const PatientHomeScreen({super.key});
 
@@ -19,12 +22,13 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final state = Provider.of<AppState>(context);
+    final isLoggedIn = state.currentUserUid != null;
+
     final List<Widget> tabs = [
       const ExploreClinicsTab(),
-      const PatientDashboard(),
+      if (isLoggedIn) const PatientDashboard(),
     ];
-
-    final state = Provider.of<AppState>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -43,20 +47,42 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.logout_rounded, color: AppColors.error),
-            tooltip: 'Sign Out',
-            onPressed: () async {
-              await state.logout();
-              if (context.mounted) {
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  (route) => false,
-                );
-              }
-            },
-          ),
+          if (isLoggedIn)
+            // Logged in — show logout
+            IconButton(
+              icon: const Icon(Icons.logout_rounded, color: AppColors.error),
+              tooltip: 'Sign Out',
+              onPressed: () async {
+                await state.logout();
+                if (context.mounted) {
+                  setState(() {
+                    _currentTab = 0;
+                  });
+                }
+              },
+            )
+          else
+            // Not logged in — show Login button
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: TextButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  ).then((_) {
+                    // Refresh state when returning from login
+                    setState(() {});
+                  });
+                },
+                icon: const Icon(Icons.login_rounded, size: 18),
+                label: const Text('Login'),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.primary,
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+              ),
+            ),
         ],
       ),
       body: IndexedStack(
@@ -71,11 +97,15 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         unselectedFontSize: 13,
         type: BottomNavigationBarType.fixed,
         onTap: (idx) {
+          if (idx == 1 && !isLoggedIn) {
+            // Not logged in — prompt login for My Bookings tab
+            _showLoginPrompt(context);
+            return;
+          }
           setState(() {
             _currentTab = idx;
           });
           if (idx == 1) {
-            // Reload appointments when opening dashboard
             Provider.of<AppState>(context, listen: false).loadAppointments();
           }
         },
@@ -90,6 +120,74 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showLoginPrompt(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.lock_outline_rounded, color: AppColors.primary, size: 32),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Login Zaroori Hai',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Apni bookings dekhne ke liye pehle login karein.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: AppColors.textLight),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    ).then((_) {
+                      setState(() {});
+                    });
+                  },
+                  child: const Text('Login / Sign Up'),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Baad me', style: TextStyle(color: AppColors.textLight)),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
@@ -217,9 +315,9 @@ class _ExploreClinicsTabState extends State<ExploreClinicsTab> {
               const SizedBox(height: 16),
               // Clinics list view
               if (state.isLoading)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40.0),
-                  child: Center(child: CircularProgressIndicator(color: AppColors.primary)),
+                const NazdeeqiLoader(
+                  message: 'Nazdeeqi Doctor',
+                  subMessage: 'Clinics load ho rahi hain...',
                 )
               else if (state.filteredClinics.isEmpty)
                 Container(
@@ -320,7 +418,7 @@ class _ExploreClinicsTabState extends State<ExploreClinicsTab> {
       ),
       child: InkWell(
         onTap: () {
-          // Go to details screen
+          // Go to details screen — no login required to browse
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ClinicDetailScreen(clinic: clinic)),

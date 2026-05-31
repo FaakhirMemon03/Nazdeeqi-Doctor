@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
+import '../../constants/nazdeeqi_loader.dart';
 import '../../models/clinic_model.dart';
 import '../../models/doctor_model.dart';
 import '../../providers/app_state.dart';
 import 'booking_success_screen.dart';
+import '../auth/login_screen.dart';
 
+/// Clinic detail screen — fully browsable without login.
+/// Doctors, time slots, clinic info all visible.
+/// Booking form requires login (shows login prompt if not authenticated).
 class ClinicDetailScreen extends StatefulWidget {
   final ClinicModel clinic;
   const ClinicDetailScreen({super.key, required this.clinic});
@@ -43,7 +48,7 @@ class _ClinicDetailScreenState extends State<ClinicDetailScreen> {
         }
       });
 
-      // Pre-fill patient details from profile
+      // Pre-fill patient details from profile if logged in
       if (state.patientProfile != null) {
         _patientNameController.text = state.patientProfile!.name;
         _patientPhoneController.text = state.patientProfile!.phone;
@@ -60,6 +65,14 @@ class _ClinicDetailScreenState extends State<ClinicDetailScreen> {
   }
 
   void _handleBookAppointment() async {
+    final state = Provider.of<AppState>(context, listen: false);
+
+    // Check login — must be logged in to book
+    if (state.currentUserUid == null) {
+      _showLoginRequiredDialog();
+      return;
+    }
+
     if (_selectedDoctor == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Doctor select karna zaroori hai.')),
@@ -77,7 +90,6 @@ class _ClinicDetailScreenState extends State<ClinicDetailScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isBooking = true);
-    final state = Provider.of<AppState>(context, listen: false);
 
     try {
       final appointment = await state.bookAppointment(
@@ -108,9 +120,85 @@ class _ClinicDetailScreenState extends State<ClinicDetailScreen> {
     }
   }
 
+  void _showLoginRequiredDialog() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 20),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.lock_outline_rounded, color: AppColors.primary, size: 32),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Login Zaroori Hai',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Appointment book karne ke liye pehle login karein.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 14, color: AppColors.textLight),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    ).then((_) {
+                      // Refresh state when returning from login
+                      final state = Provider.of<AppState>(context, listen: false);
+                      if (state.patientProfile != null) {
+                        setState(() {
+                          _patientNameController.text = state.patientProfile!.name;
+                          _patientPhoneController.text = state.patientProfile!.phone;
+                        });
+                      }
+                    });
+                  },
+                  child: const Text('Login / Sign Up'),
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Baad me', style: TextStyle(color: AppColors.textLight)),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = Provider.of<AppState>(context);
+    final isLoggedIn = state.currentUserUid != null;
 
     // Build lists of the next 5 dates
     final dates = List.generate(5, (idx) => DateTime.now().add(Duration(days: idx)));
@@ -188,7 +276,10 @@ class _ClinicDetailScreenState extends State<ClinicDetailScreen> {
                 const Text('Doctor Select Karein', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
                 const SizedBox(height: 12),
                 if (state.isLoading)
-                  const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                  const NazdeeqiLoader(
+                    message: 'Doctors load ho rahe hain...',
+                    size: 56,
+                  )
                 else if (state.activeClinicDoctors.isEmpty)
                   const Text('Abhi is clinic me koi active doctor available nahi hai.', style: TextStyle(color: AppColors.textLight, fontSize: 13))
                 else
@@ -361,53 +452,120 @@ class _ClinicDetailScreenState extends State<ClinicDetailScreen> {
                   ),
                 ],
                 const SizedBox(height: 24),
-                // Section: Patient Details Form
-                const Text('Mareez (Patient) Ki Details', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _patientNameController,
-                  validator: (val) {
-                    if (val == null || val.isEmpty) return 'Mareez ka naam zaroori hai';
-                    return null;
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Patient Ka Naam *',
-                    prefixIcon: Icon(Icons.person_outline, color: AppColors.textLight),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _patientPhoneController,
-                  keyboardType: TextInputType.phone,
-                  validator: (val) {
-                    if (val == null || val.isEmpty) return 'Phone number zaroori hai';
-                    return null;
-                  },
-                  decoration: const InputDecoration(
-                    labelText: 'Phone Number *',
-                    prefixIcon: Icon(Icons.phone_outlined, color: AppColors.textLight),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _complaintController,
-                  maxLines: 3,
-                  decoration: const InputDecoration(
-                    labelText: 'Bimari / Complaint (Optional)',
-                    hintText: 'e.g. Bukhar aur khansi hai...',
-                    prefixIcon: Padding(
-                      padding: EdgeInsets.only(bottom: 40.0),
-                      child: Icon(Icons.comment_outlined, color: AppColors.textLight),
+
+                // Section: Patient Details / Login Prompt
+                if (!isLoggedIn) ...[
+                  // Not logged in — show login required card
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryLight.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.primary.withValues(alpha: 0.1),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(Icons.lock_outline_rounded, color: AppColors.primary, size: 28),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Appointment book karne ke liye login zaroori hai',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.textDark),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Pehle apna account banayein ya login karein, phir appointment confirm karein.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12, color: AppColors.textLight, height: 1.4),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                              ).then((_) {
+                                final state = Provider.of<AppState>(context, listen: false);
+                                if (state.patientProfile != null) {
+                                  setState(() {
+                                    _patientNameController.text = state.patientProfile!.name;
+                                    _patientPhoneController.text = state.patientProfile!.phone;
+                                  });
+                                }
+                              });
+                            },
+                            icon: const Icon(Icons.login_rounded, size: 18),
+                            label: const Text('Login / Sign Up Karein'),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: _isBooking ? null : _handleBookAppointment,
-                  child: _isBooking
-                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                      : const Text('Confirm Appointment'),
-                ),
+                ] else ...[
+                  // Logged in — show booking form
+                  const Text('Mareez (Patient) Ki Details', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _patientNameController,
+                    validator: (val) {
+                      if (val == null || val.isEmpty) return 'Mareez ka naam zaroori hai';
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Patient Ka Naam *',
+                      prefixIcon: Icon(Icons.person_outline, color: AppColors.textLight),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _patientPhoneController,
+                    keyboardType: TextInputType.phone,
+                    validator: (val) {
+                      if (val == null || val.isEmpty) return 'Phone number zaroori hai';
+                      return null;
+                    },
+                    decoration: const InputDecoration(
+                      labelText: 'Phone Number *',
+                      prefixIcon: Icon(Icons.phone_outlined, color: AppColors.textLight),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextFormField(
+                    controller: _complaintController,
+                    maxLines: 3,
+                    decoration: const InputDecoration(
+                      labelText: 'Bimari / Complaint (Optional)',
+                      hintText: 'e.g. Bukhar aur khansi hai...',
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.only(bottom: 40.0),
+                        child: Icon(Icons.comment_outlined, color: AppColors.textLight),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  ElevatedButton(
+                    onPressed: _isBooking ? null : _handleBookAppointment,
+                    child: _isBooking
+                        ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        : const Text('Confirm Appointment'),
+                  ),
+                ],
                 const SizedBox(height: 24),
               ],
             ),
