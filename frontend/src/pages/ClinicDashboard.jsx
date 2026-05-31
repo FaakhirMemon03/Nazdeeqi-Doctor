@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getClinicAppointments, getClinicDoctors, addDoctor, deleteDoctor } from '../api';
+import { getClinicAppointments, getClinicDoctors, addDoctor, deleteDoctor, getClinicById, updateClinicSettings } from '../api';
 
 const SPECIALTIES = [
   'General Physician', 'Cardiologist', 'Gynecologist', 'Dermatologist', 
