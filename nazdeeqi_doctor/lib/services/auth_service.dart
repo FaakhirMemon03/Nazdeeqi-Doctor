@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart' as fauth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
 import '../models/clinic_model.dart';
-import 'database_service.dart';
-import 'service_locator.dart';
 
 abstract class AuthService {
   String? get currentUid;
