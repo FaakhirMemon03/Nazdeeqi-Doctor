@@ -128,7 +128,7 @@ class _ExploreClinicsTabState extends State<ExploreClinicsTab> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.2),
+                      color: AppColors.primary.withValues(alpha: 0.2),
                       blurRadius: 12,
                       offset: const Offset(0, 6),
                     )
@@ -205,7 +205,7 @@ class _ExploreClinicsTabState extends State<ExploreClinicsTab> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryLight.withOpacity(0.4),
+                    color: AppColors.primaryLight.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(

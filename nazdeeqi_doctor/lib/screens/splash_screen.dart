@@ -39,6 +39,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     // Initialize service container
     ServiceLocator.init(demoMode: demoMode);
 
+    // Capture navigator before async gap
+    final navigator = Navigator.of(context);
+
     // Bootstrap State session loaders
     final state = Provider.of<AppState>(context, listen: false);
     state.setLoading(true);
@@ -46,8 +49,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     state.setLoading(false);
 
     if (mounted) {
-      Navigator.pushReplacement(
-        context,
+      navigator.pushReplacement(
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     }
@@ -188,7 +190,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.15),
+                        color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: Colors.white24, width: 1.5),
                       ),

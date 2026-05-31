@@ -20,7 +20,7 @@ class AppState extends ChangeNotifier {
 
   List<ClinicModel> _clinics = [];
   List<ClinicModel> _filteredClinics = [];
-  Map<String, double> _clinicDistances = {}; // clinicUid -> distance in km
+  final Map<String, double> _clinicDistances = {}; // clinicUid -> distance in km
   String _locationStatus = '';
 
   List<DoctorModel> _activeClinicDoctors = [];

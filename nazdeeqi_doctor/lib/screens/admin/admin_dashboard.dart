@@ -93,7 +93,7 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle_outline_rounded, size: 56, color: AppColors.success.withOpacity(0.3)),
+            Icon(Icons.check_circle_outline_rounded, size: 56, color: AppColors.success.withValues(alpha: 0.3)),
             const SizedBox(height: 12),
             const Text(
               'Koi pending registrations nahi hain.',
@@ -232,9 +232,9 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppColors.primaryLight.withOpacity(0.3),
+            color: AppColors.primaryLight.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.primary.withOpacity(0.1)),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
           ),
           child: Row(
             children: [
@@ -348,7 +348,7 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.2)),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
