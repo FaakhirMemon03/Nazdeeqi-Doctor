@@ -5,12 +5,15 @@ import 'constants/theme.dart';
 import 'providers/app_state.dart';
 import 'screens/splash_screen.dart';
 import 'services/service_locator.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (e) {
     debugPrint("Firebase init failed or credentials missing: $e");
     // Throwing so developer knows Firebase is strictly required
