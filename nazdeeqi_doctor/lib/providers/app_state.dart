@@ -44,17 +44,9 @@ class AppState extends ChangeNotifier {
   // Active platform stats counters
   int get totalClinicsCount => _clinics.where((c) => c.status == 'approved').length;
   int get totalDoctorsCount {
-    if (ServiceLocator.isDemoMode) {
-      final db = ServiceLocator.database as MockDatabaseService;
-      return db.mockDoctors.where((d) => d.isActive).length;
-    }
-    return _clinics.length * 3; // Mock math fallback for firebase mode if doctor count is unaggregated
+    return _clinics.length * 3;
   }
   int get totalPatientsServed {
-    if (ServiceLocator.isDemoMode) {
-      final db = ServiceLocator.database as MockDatabaseService;
-      return db.mockAppointments.length + 10450; // Visual boost to match original "10K+" style
-    }
     return 12450;
   }
 
@@ -84,19 +76,20 @@ class AppState extends ChangeNotifier {
   Future<void> _loadProfileData() async {
     if (_currentUserUid == null) return;
     final db = ServiceLocator.database;
-    
+
     if (_currentUserRole == 'patient') {
-      if (ServiceLocator.isDemoMode) {
-        final mockDb = db as MockDatabaseService;
-        _patientProfile = mockDb.mockUsers.firstWhere(
-          (u) => u.uid == _currentUserUid,
-          orElse: () => UserModel(uid: _currentUserUid!, name: 'Patient Profile', email: _currentUserEmail!, phone: '', createdAt: DateTime.now()),
-        );
-      } else {
-        // From Firebase (would usually fetch details from users collection)
-        // For simplicity:
-        _patientProfile = UserModel(uid: _currentUserUid!, name: 'User Profile', email: _currentUserEmail!, phone: '', createdAt: DateTime.now());
-      }
+      _patientProfile = UserModel(
+        uid: _currentUserUid!,
+        name: 'Patient',
+        email: _currentUserEmail!,
+        phone: '',
+        createdAt: DateTime.now(),
+      );
+      // Try to fetch real profile from Firestore
+      try {
+        final fetched = await (db as FirebaseDatabaseService).getUserById(_currentUserUid!);
+        if (fetched != null) _patientProfile = fetched;
+      } catch (_) {}
     } else if (_currentUserRole == 'clinic') {
       _clinicProfile = await db.getClinicById(_currentUserUid!);
     } else if (_currentUserRole == 'admin') {
