@@ -17,6 +17,8 @@ export const getClinicById = (id) => api.get(`/clinics/${id}`);
 export const getStats = () => api.get('/clinics/stats');
 export const registerClinic = (formData) =>
   api.post('/clinics/register', formData);
+export const updateClinicSettings = (data) => api.patch('/clinics/settings', data);
+
 export const bookAppointment = (data) => api.post('/appointments', data);
 
 // Auth & Users

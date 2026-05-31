@@ -5,6 +5,7 @@ const Appointment = require('../models/Appointment');
 const upload = require('../middleware/upload');
 const { sendRegistrationPending } = require('../utils/mailer');
 const { haversineDistance } = require('../utils/helpers');
+const { authClinic } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -129,6 +130,22 @@ router.post('/register', handleUpload, async (req, res) => {
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
+});
+
+router.patch('/settings', authClinic, async (req, res) => {
+  try {
+    const { isOpenToday, timings } = req.body;
+    const clinic = await Clinic.findById(req.clinicId);
+    if (!clinic) return res.status(404).json({ message: 'Clinic not found' });
+
+    if (isOpenToday !== undefined) clinic.isOpenToday = isOpenToday;
+    if (timings !== undefined) clinic.timings = timings;
+
+    await clinic.save();
+    res.json({ message: 'Settings update ho gayin', clinic });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = router;

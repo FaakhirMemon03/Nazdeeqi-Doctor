@@ -9,6 +9,8 @@ const clinicSchema = new mongoose.Schema(
     latitude: { type: Number, default: null },
     longitude: { type: Number, default: null },
     city: { type: String, default: 'Karachi' },
+    isOpenToday: { type: Boolean, default: true },
+    timings: { type: String, default: 'Mon-Sat: 9:00 AM - 9:00 PM' },
     certificateImage: { type: String, required: true },
     licenseImage: { type: String, required: true },
     agreementImages: [{ type: String }],
