@@ -11,6 +11,7 @@ import RegisterUserPage from './pages/RegisterUserPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import UserDashboard from './pages/UserDashboard';
+import EditProfilePage from './pages/EditProfilePage';
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/clinic-dashboard" element={<ClinicDashboard />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
+        <Route path="/edit-profile" element={<EditProfilePage />} />
       </Routes>
     </div>
   );

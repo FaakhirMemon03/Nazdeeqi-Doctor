@@ -134,4 +134,46 @@ router.post('/reset-password/:token', async (req, res) => {
   }
 });
 
+router.get('/profile', async (req, res) => {
+  try {
+    const header = req.headers.authorization;
+    if (!header?.startsWith('Bearer ')) return res.status(401).json({ message: 'Login required' });
+    const jwt = require('jsonwebtoken');
+    const decoded = jwt.verify(header.split(' ')[1], process.env.JWT_SECRET);
+    if (decoded.role !== 'user') return res.status(403).json({ message: 'Not a patient account' });
+    const user = await User.findById(decoded.id).select('-password -resetPasswordToken -resetPasswordExpires');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.put('/profile', async (req, res) => {
+  try {
+    const header = req.headers.authorization;
+    if (!header?.startsWith('Bearer ')) return res.status(401).json({ message: 'Login required' });
+    const jwtLib = require('jsonwebtoken');
+    const decoded = jwtLib.verify(header.split(' ')[1], process.env.JWT_SECRET);
+    if (decoded.role !== 'user') return res.status(403).json({ message: 'Not a patient account' });
+
+    const { name, phone, email } = req.body;
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (email && email.toLowerCase() !== user.email) {
+      const exists = await User.findOne({ email: email.toLowerCase() });
+      if (exists) return res.status(400).json({ message: 'Ye email pehle se use ho rahi hai' });
+      user.email = email.toLowerCase();
+    }
+    if (name) user.name = name.trim();
+    if (phone) user.phone = phone.trim();
+
+    await user.save();
+    res.json({ message: 'Profile update ho gayi!', user: { id: user._id, name: user.name, email: user.email, phone: user.phone } });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

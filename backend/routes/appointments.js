@@ -79,4 +79,21 @@ router.get('/user', authUser, async (req, res) => {
   }
 });
 
+router.patch('/:id/cancel', authUser, async (req, res) => {
+  try {
+    const appointment = await Appointment.findOne({ _id: req.params.id, user: req.userId });
+    if (!appointment) {
+      return res.status(404).json({ message: 'Appointment nahi mili ya aapki nahi hai' });
+    }
+    if (appointment.status === 'cancelled') {
+      return res.status(400).json({ message: 'Ye appointment pehle se cancel hai' });
+    }
+    appointment.status = 'cancelled';
+    await appointment.save();
+    res.json({ message: 'Appointment cancel kar di gayi' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;
