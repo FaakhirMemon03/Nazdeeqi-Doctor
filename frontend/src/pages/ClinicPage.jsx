@@ -217,8 +217,15 @@ export default function ClinicPage() {
             padding: '1.5rem',
             color: 'white',
             marginBottom: '1.5rem',
-            boxShadow: '0 8px 32px rgba(4,52,44,0.25)'
+            boxShadow: '0 8px 32px rgba(4,52,44,0.25)',
+            position: 'relative',
+            overflow: 'hidden'
           }}>
+            <div style={{ textAlign: 'center', marginBottom: '1.2rem', paddingBottom: '0.8rem', borderBottom: '1px dashed rgba(255,255,255,0.3)' }}>
+              <div style={{ fontSize: '12px', letterSpacing: '2px', opacity: 0.8, textTransform: 'uppercase' }}>Official Appointment Slip</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 700, fontFamily: "'Playfair Display', serif", marginTop: '4px' }}>Nazdeeqi Doctors</div>
+            </div>
+            
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
               <div>
                 <div style={{ fontSize: '11px', opacity: 0.7, letterSpacing: '1px', textTransform: 'uppercase' }}>Booking ID</div>
