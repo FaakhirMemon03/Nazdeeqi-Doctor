@@ -197,7 +197,29 @@ input:focus, select:focus, textarea:focus {
 .alert-info { background: var(--green-light); color: var(--green-dark); }
 .alert-error { background: #FBEAF0; color: #993556; }
 .alert-success { background: var(--green-light); color: var(--green-dark); }
-.loading { text-align: center; padding: 2rem; color: var(--color-text-secondary); }
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  color: var(--green-primary);
+  font-weight: 500;
+  font-size: 15px;
+  gap: 12px;
+}
+.loading::before {
+  content: "";
+  width: 36px;
+  height: 36px;
+  border: 3.5px solid var(--green-light);
+  border-top-color: var(--green-primary);
+  border-radius: 50%;
+  animation: spinner 0.8s linear infinite;
+}
+@keyframes spinner {
+  to { transform: rotate(360deg); }
+}
 
 @media (max-width: 768px) {
   .cl-form-row { grid-template-columns: 1fr; }

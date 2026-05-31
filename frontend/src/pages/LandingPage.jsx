@@ -107,10 +107,27 @@ export default function LandingPage() {
                 onKeyDown={(e) => e.key === 'Enter' && navigate(`/clinic/${clinic._id}`)}
               >
                 <div>
-                  <p className="clinic-card-name">{clinic.name}</p>
+                  <p className="clinic-card-name" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                    {clinic.name}
+                    <span style={{
+                      fontSize: '10px',
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontWeight: 600,
+                      background: clinic.isOpenToday !== false ? '#E1F5EE' : '#FBEAF0',
+                      color: clinic.isOpenToday !== false ? '#085041' : '#993556'
+                    }}>
+                      {clinic.isOpenToday !== false ? '● Open Today' : '● Closed Today'}
+                    </span>
+                  </p>
                   <p className="clinic-card-meta">
                     <i className="ti ti-map-pin" style={{ fontSize: 12 }} /> {clinic.address}
                   </p>
+                  {clinic.timings && (
+                    <p className="clinic-card-meta" style={{ color: '#0F6E56', display: 'flex', alignItems: 'center', gap: '4px', margin: '4px 0' }}>
+                      <i className="ti ti-clock" style={{ fontSize: 12 }} /> <span style={{ fontWeight: 500 }}>{clinic.timings}</span>
+                    </p>
+                  )}
                   <p className="clinic-card-meta">
                     {clinic.doctorCount || 0} doctors available
                   </p>

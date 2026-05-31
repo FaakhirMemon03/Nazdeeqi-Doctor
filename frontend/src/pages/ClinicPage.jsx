@@ -91,13 +91,30 @@ export default function ClinicPage() {
   return (
     <div className="page-container cl-wrap">
       <div className="cl-hero">
-        <span className="cl-badge">
-          <i className="ti ti-building-hospital" aria-hidden="true" /> {clinic.city}
-        </span>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '1rem' }}>
+          <span className="cl-badge" style={{ margin: 0 }}>
+            <i className="ti ti-building-hospital" aria-hidden="true" /> {clinic.city}
+          </span>
+          <span style={{
+            fontSize: '12px',
+            padding: '4px 12px',
+            borderRadius: '20px',
+            fontWeight: 600,
+            background: clinic.isOpenToday !== false ? '#E1F5EE' : '#FBEAF0',
+            color: clinic.isOpenToday !== false ? '#085041' : '#993556'
+          }}>
+            {clinic.isOpenToday !== false ? '● Open Today' : '● Closed Today'}
+          </span>
+        </div>
         <h1 className="cl-title">{clinic.name}</h1>
-        <p className="cl-sub">
+        <p className="cl-sub" style={{ marginBottom: '8px' }}>
           <i className="ti ti-map-pin" /> {clinic.address}
         </p>
+        {clinic.timings && (
+          <p style={{ margin: '0 0 1.5rem 0', fontSize: '14px', color: '#0F6E56', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <i className="ti ti-clock" /> Timings: <strong>{clinic.timings}</strong>
+          </p>
+        )}
         <div className="cl-stats">
           <div className="cl-stat">
             <div className="cl-stat-num">{doctors.length}</div>
@@ -111,6 +128,15 @@ export default function ClinicPage() {
           </div>
         </div>
       </div>
+
+      {clinic.isOpenToday === false && (
+        <div className="alert alert-error" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <i className="ti ti-alert-triangle" style={{ fontSize: '20px' }} />
+          <div>
+            <strong>Tawajjuh farmayein:</strong> Aaj ye clinic band (Closed) hai. Aap agle working day ke liye appointment book kar sakte hain.
+          </div>
+        </div>
+      )}
 
       {!success ? (
         <>
