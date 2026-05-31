@@ -211,7 +211,7 @@ export default function ClinicPage() {
           </div>
 
           {/* Receipt Card */}
-          <div style={{
+          <div className="receipt-card" style={{
             background: 'linear-gradient(135deg, #04342C 0%, #0F6E56 100%)',
             borderRadius: '16px',
             padding: '1.5rem',
@@ -264,6 +264,16 @@ export default function ClinicPage() {
                 </div>
               )}
             </div>
+          </div>
+
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <button 
+              className="btn-sm btn-outline" 
+              onClick={() => window.print()}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '14px', padding: '8px 16px' }}
+            >
+              <i className="ti ti-download" /> Download / Print Slip
+            </button>
           </div>
 
           <div className="alert alert-info" style={{ fontSize: '13px', marginBottom: '1rem' }}>

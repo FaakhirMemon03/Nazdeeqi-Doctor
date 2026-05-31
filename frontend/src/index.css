@@ -211,3 +211,24 @@ input:focus, select:focus, textarea:focus {
   .cl-hero { text-align: center; padding: 2rem 1rem; }
   .cl-title { font-size: 24px; }
 }
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .receipt-card, .receipt-card * {
+    visibility: visible;
+  }
+  .receipt-card {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0 !important;
+    padding: 20px !important;
+    box-shadow: none !important;
+    background: #04342C !important; /* Force background color for print if browser allows */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
