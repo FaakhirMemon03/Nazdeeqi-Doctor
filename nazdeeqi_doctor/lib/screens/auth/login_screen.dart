@@ -24,6 +24,9 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   String _errorMessage = '';
 
+  static const String _adminEmail = 'nazdeeqi@admin.com';
+  static const String _adminPassword = 'nazdeeqi@access.com';
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -38,24 +41,40 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!_formKey.currentState!.validate()) return;
 
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    // Admin detection via hardcoded credentials
+    if (email == _adminEmail && password == _adminPassword) {
+      final state = Provider.of<AppState>(context, listen: false);
+      try {
+        await state.login(email, password, 'admin');
+        if (!mounted) return;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const AdminDashboard()),
+        );
+      } catch (e) {
+        setState(() {
+          _errorMessage = e.toString().replaceAll('Exception:', '').trim();
+        });
+      }
+      return;
+    }
+
     final state = Provider.of<AppState>(context, listen: false);
 
     try {
       await state.login(
-        _emailController.text.trim(),
-        _passwordController.text,
+        email,
+        password,
         _selectedRole,
       );
 
       if (!mounted) return;
 
-      // Role based routing — push so user can go Back to Login if needed
-      if (_selectedRole == 'admin') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const AdminDashboard()),
-        );
-      } else if (_selectedRole == 'clinic') {
+      // Role based routing
+      if (_selectedRole == 'clinic') {
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const ClinicDashboard()),
@@ -133,7 +152,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         _buildRoleTab('patient', 'Patient'),
                         _buildRoleTab('clinic', 'Clinic'),
-                        _buildRoleTab('admin', 'Admin'),
                       ],
                     ),
                   ),

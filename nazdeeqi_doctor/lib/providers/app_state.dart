@@ -69,8 +69,13 @@ class AppState extends ChangeNotifier {
       _currentUserEmail = email;
       _currentUserRole = role;
       
-      // Load respective profile data
-      await _loadProfileData();
+      // Restore admin local session without Firebase
+      if (uid == 'admin_local') {
+        _adminProfile = {'uid': 'admin_local', 'email': email, 'name': 'Nazdeeqi Admin'};
+      } else {
+        // Load respective profile data
+        await _loadProfileData();
+      }
     }
     await loadClinics();
   }
@@ -99,10 +104,32 @@ class AppState extends ChangeNotifier {
     }
   }
 
+  static const String _adminEmail = 'nazdeeqi@admin.com';
+  static const String _adminPassword = 'nazdeeqi@access.com';
+
   // Login handler
   Future<void> login(String email, String password, String role) async {
     setLoading(true);
     try {
+      // Hardcoded admin bypass — no Firebase auth needed
+      if (role == 'admin' && email == _adminEmail && password == _adminPassword) {
+        _currentUserUid = 'admin_local';
+        _currentUserEmail = email;
+        _currentUserRole = 'admin';
+        _adminProfile = {'uid': 'admin_local', 'email': email, 'name': 'Nazdeeqi Admin'};
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('saved_uid', _currentUserUid!);
+        await prefs.setString('saved_email', _currentUserEmail!);
+        await prefs.setString('saved_role', 'admin');
+
+        // Load all data for admin
+        await loadClinics();
+        await loadAllUsers();
+        await loadAppointments();
+        return;
+      }
+
       final result = await ServiceLocator.auth.login(email, password, role);
       if (result != null) {
         _currentUserUid = ServiceLocator.auth.currentUid;
@@ -128,7 +155,10 @@ class AppState extends ChangeNotifier {
   Future<void> logout() async {
     setLoading(true);
     try {
-      await ServiceLocator.auth.logout();
+      // Only call Firebase logout if not local admin session
+      if (_currentUserUid != 'admin_local') {
+        await ServiceLocator.auth.logout();
+      }
       _currentUserUid = null;
       _currentUserEmail = null;
       _currentUserRole = null;
@@ -136,6 +166,7 @@ class AppState extends ChangeNotifier {
       _clinicProfile = null;
       _adminProfile = null;
       _appointments = [];
+      _allUsers = [];
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove('saved_uid');

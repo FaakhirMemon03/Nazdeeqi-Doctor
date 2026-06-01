@@ -14,8 +14,9 @@ class BookingSuccessScreen extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          padding: const EdgeInsets.fromLTRB(24.0, 16.0, 24.0, 32.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -175,7 +176,7 @@ class BookingSuccessScreen extends StatelessWidget {
                 },
                 child: const Text('Wapas Home Par Jayein'),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 40),
             ],
           ),
         ),

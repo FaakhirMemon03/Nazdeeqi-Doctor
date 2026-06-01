@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../constants/colors.dart';
 import '../../providers/app_state.dart';
 import '../../models/clinic_model.dart';
 import '../../models/user_model.dart';
+import '../../models/appointment_model.dart';
 import '../auth/login_screen.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -19,10 +21,12 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    // Load users when admin dashboard opens
+    _tabController = TabController(length: 4, vsync: this);
+    // Load users and appointments when admin dashboard opens
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<AppState>(context, listen: false).loadAllUsers();
+      final state = Provider.of<AppState>(context, listen: false);
+      state.loadAllUsers();
+      state.loadAppointments();
     });
   }
 
@@ -77,6 +81,7 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
             Tab(icon: Icon(Icons.pending_actions_rounded), text: 'Pending Approval'),
             Tab(icon: Icon(Icons.business_rounded), text: 'All Clinics'),
             Tab(icon: Icon(Icons.people_rounded), text: 'All Users'),
+            Tab(icon: Icon(Icons.calendar_month_rounded), text: 'Appointments'),
           ],
         ),
       ),
@@ -86,6 +91,7 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
           _buildPendingTab(context, state, pending),
           _buildAllClinicsTab(context, state, allClinics),
           _buildAllUsersTab(context, state),
+          _buildAllAppointmentsTab(context, state),
         ],
       ),
     );
@@ -498,6 +504,259 @@ class _AdminDashboardState extends State<AdminDashboard> with SingleTickerProvid
                 style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: AppColors.success),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // -------------------------------------------------------------
+  // 4. ALL APPOINTMENTS TAB
+  // -------------------------------------------------------------
+  Widget _buildAllAppointmentsTab(BuildContext context, AppState state) {
+    final appointments = state.appointments;
+
+    if (appointments.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.calendar_today_outlined, size: 56, color: Colors.grey.shade300),
+            const SizedBox(height: 12),
+            const Text('Koi appointments nahi mili.',
+                style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textLight)),
+            const SizedBox(height: 8),
+            ElevatedButton.icon(
+              onPressed: () => state.loadAppointments(),
+              icon: const Icon(Icons.refresh_rounded, size: 16),
+              label: const Text('Refresh'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Sort by newest first
+    final sorted = [...appointments]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    return Column(
+      children: [
+        // Stats row
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryLight,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Total', style: TextStyle(fontSize: 11, color: AppColors.primary, fontWeight: FontWeight.bold)),
+                      Text('${appointments.length}', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.successBg,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Confirmed', style: TextStyle(fontSize: 11, color: AppColors.success, fontWeight: FontWeight.bold)),
+                      Text(
+                        '${appointments.where((a) => a.status == 'confirmed' || a.status == 'pending').length}',
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.success),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.warningBg,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Cancelled', style: TextStyle(fontSize: 11, color: AppColors.warning, fontWeight: FontWeight.bold)),
+                      Text(
+                        '${appointments.where((a) => a.status == 'cancelled').length}',
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.warning),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Row(
+            children: [
+              Text('Kul Appointments: ${appointments.length}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.textDark, fontSize: 13)),
+              const Spacer(),
+              IconButton(
+                onPressed: () => state.loadAppointments(),
+                icon: const Icon(Icons.refresh_rounded, color: AppColors.primary, size: 20),
+                tooltip: 'Refresh',
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            itemCount: sorted.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (context, index) {
+              return _buildAppointmentCard(sorted[index]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAppointmentCard(AppointmentModel appt) {
+    final dateStr = DateFormat('d MMM yyyy').format(appt.appointmentDate);
+    final bookedOn = DateFormat('d MMM yyyy, h:mm a').format(appt.createdAt);
+
+    Color statusColor = AppColors.success;
+    Color statusBg = AppColors.successBg;
+    if (appt.status == 'cancelled') {
+      statusColor = AppColors.error;
+      statusBg = AppColors.errorBg;
+    } else if (appt.status == 'completed') {
+      statusColor = AppColors.textLight;
+      statusBg = Colors.grey.shade100;
+    }
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header row: booking code + status
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.confirmation_number_outlined, size: 14, color: AppColors.primary),
+                    const SizedBox(width: 4),
+                    Text(
+                      appt.bookingCode,
+                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.primary, letterSpacing: 0.5),
+                    ),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(color: statusBg, borderRadius: BorderRadius.circular(10)),
+                  child: Text(
+                    appt.status.toUpperCase(),
+                    style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: statusColor),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            // Patient info
+            Row(
+              children: [
+                const Icon(Icons.person_outline, size: 14, color: AppColors.textLight),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    '${appt.patientName}  •  ${appt.patientPhone}',
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.textDark),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            // Clinic info
+            Row(
+              children: [
+                const Icon(Icons.local_hospital_outlined, size: 14, color: AppColors.textLight),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    appt.clinicName,
+                    style: const TextStyle(fontSize: 12, color: AppColors.textLight),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            // Doctor info
+            Row(
+              children: [
+                const Icon(Icons.medical_services_outlined, size: 14, color: AppColors.textLight),
+                const SizedBox(width: 6),
+                Text(appt.doctorName, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+              ],
+            ),
+            const Divider(height: 16, thickness: 1),
+            // Date and time row
+            Row(
+              children: [
+                const Icon(Icons.calendar_today_outlined, size: 13, color: AppColors.primary),
+                const SizedBox(width: 4),
+                Text(dateStr, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+                const SizedBox(width: 16),
+                const Icon(Icons.access_time_rounded, size: 13, color: AppColors.primary),
+                const SizedBox(width: 4),
+                Text(appt.timeSlot, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textDark)),
+              ],
+            ),
+            const SizedBox(height: 4),
+            // Booked on info
+            Row(
+              children: [
+                const Icon(Icons.history_rounded, size: 13, color: AppColors.textLight),
+                const SizedBox(width: 4),
+                Text('Book kiya: $bookedOn', style: const TextStyle(fontSize: 11, color: AppColors.textLight)),
+              ],
+            ),
+            if (appt.complaint.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'Complaint: ${appt.complaint}',
+                  style: const TextStyle(fontSize: 11, color: AppColors.textLight),
+                ),
+              ),
+            ],
           ],
         ),
       ),
