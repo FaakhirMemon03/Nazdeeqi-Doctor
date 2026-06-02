@@ -44,6 +44,11 @@ dependencies:
   shared_preferences: ^2.5.5
   intl: ^0.20.2
   uuid: ^4.5.3
+    # NEW: For file picker (images, PDFs from gallery/file system)
+  file_picker: ^7.0.0
+  
+  # NEW: For displaying PDF files (optional, if you want preview)
+  pdf_render: ^3.2.0
 
 dev_dependencies:
   flutter_test:
